@@ -6,7 +6,8 @@ Smart Media Insights Platform for Images and Text
 
 The MVP is set out to have the following architecture:
 
-![Smart Media Platform Arch - MVP](arch/system_arch.drawio.png)
+![Smart Media Platform Arch - MVP](./arch/arch/system_arch.drawio.png)
 
 > [!NOTE]
 > For testing and simplicity, I will omit DNS plus certification in the beginning, as well as the RDS database. For a simple lookup of results, DynamoDB can serve this purpose.
+    
