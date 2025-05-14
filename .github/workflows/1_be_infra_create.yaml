@@ -1,0 +1,35 @@
+name: (1) Create BE Infrastructure
+
+on:
+  workflow_dispatch:
+
+jobs:
+  provide-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "checkout"
+      uses: actions/checkout@v4
+
+    - name: setup-terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: authenticate-to-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.TF_AWS_REGION }}
+        aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+        
+    - name: init-validate-apply-backend
+      working-directory: terraform/backend/
+      run: |
+        terraform init 
+        terraform validate
+        terraform apply -auto-approve \
+          -var="aws_region=${{ vars.TF_AWS_REGION }}"
+        terraform output > backend.config
+    
+    - name: upload-state-and-config 
+      run: |
+        aws s3 cp ./terraform/backend/terraform.tfstate s3://${{ vars.AWS_STATIC_BUCKET }}/terraform/backend/terraform.tfstate
+        aws s3 cp ./terraform/backend/backend.config s3://${{ vars.AWS_STATIC_BUCKET }}/terraform/backend/backend.config
