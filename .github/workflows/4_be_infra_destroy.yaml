@@ -1,0 +1,36 @@
+name: (2) Destroy BE Infrastructure
+
+on:
+  workflow_dispatch:
+
+jobs:
+  destroy-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    
+    - name: setup-terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: authenticate-to-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.TF_AWS_REGION }}
+        aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+
+    - name: acquire-state
+      run: |
+        aws s3 cp s3://${{ vars.AWS_STATIC_BUCKET }}/terraform/backend/terraform.tfstate terraform/backend/terraform.tfstate
+    
+    - name: destroy-backend-infra
+      run: |
+        terraform init
+        terraform destroy -auto-approve \
+          -var="aws_region=${{ vars.TF_AWS_REGION }}"
+
+    - name: clean-up-static-bucket
+      run: |
+        aws s3 rm s3://${{ vars.AWS_STATIC_BUCKET }}/terraform/backend/terraform.tfstate
+        aws s3 rm s3://${{ vars.AWS_STATIC_BUCKET }}/terraform/backend/backend.config
