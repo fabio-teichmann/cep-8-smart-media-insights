@@ -1,0 +1,95 @@
+name: (2) Build and Deploy Smart-Media
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    
+    # build docker image
+
+    # upload to repo
+
+  apply-infra:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    # safe tf outputs to json files
+
+    - name: upload-artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: tf-outputs
+        path: ./terraform/environments/dev/tf-outputs.json
+
+  deploy-app:
+    runs-on: ubuntu-latest
+    needs: [ apply-infra ]
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: download-artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: tf-outputs
+
+    - name: authenticate-to-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.TF_AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
+    - name: extract-params
+      id: extract
+      run: |
+        vpc_id=$(jq -r '.vpc_id.value' tf-outputs.json)
+        echo "vpc_id=$vpc_id" >> "$GITHUB_OUTPUT"
+
+        cluster_name=$(jq -r '.cluster_name.value' tf-outputs.json)
+        echo "cluster_name=$cluster_name" >> "$GITHUB_OUTPUT"
+
+        aws_account_id=$(aws sts get-caller-identity --query Account --output text)
+        echo "aws_account_id=$aws_account_id" >> "$GITHUB_OUTPUT"
+
+        svc_acc_annot=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
+        echo "svc_acc_annot=$svc_acc_annot" >> "$GITHUB_OUTPUT"
+
+    - name: set-up-kubeconfig-for-eks
+      run: |
+        aws eks update-kubeconfig \
+          --region ${{ vars.TF_AWS_REGION }} \
+          --name ${{ steps.extract.outputs.cluster_name }}
+
+    - name: add-eks
+      run: |
+        helm repo add eks https://aws.github.io/eks-charts
+        
+    - name: install-remote
+      run: |
+        helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \
+          --namespace kube-system \
+          --set clusterName=${{ steps.extract.outputs.cluster_name }} \
+          --set serviceAccount.create=true \
+          --set serviceAccount.name=aws-load-balancer-controller \
+          --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${{ steps.extract.outputs.aws_account_id }}:role/alb-controller-role" \
+          --set region=${{ vars.TF_AWS_REGION }} \
+          --set vpcId=${{ steps.extract.outputs.vpc_id }}
+
+    - name: deploy-helm-chart
+      run: |
+        helm upgrade -i smart-media ./helm-charts/smart-media \
+          --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media \
+          # --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
+          # --set env.dynamoDbStatusTable=${{ steps.extract.outputs.dynamodb_status_table }} \
+          # --set env.s3MediaTable=${{ steps.extract.outputs.s3_media_table }} \
+          --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
+          --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} \
+          --set secrets.logfireApiToken=${{ secrets.LOGFIRE_API_KEY}} \
+          --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} \
+          --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${{steps.extract.outputs.svc_acc_annot}}
