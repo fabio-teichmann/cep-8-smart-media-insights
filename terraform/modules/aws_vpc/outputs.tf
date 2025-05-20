@@ -9,3 +9,7 @@ output "vpc_private_subnets" {
 output "vpc_public_subnets" {
     value = module.vpc.public_subnets
 }
+
+output "lambda_sg_id" {
+    value = aws_security_group.lambda_sg.id
+}

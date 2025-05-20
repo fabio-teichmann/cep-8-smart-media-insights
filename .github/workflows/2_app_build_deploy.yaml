@@ -65,6 +65,10 @@ jobs:
         aws eks update-kubeconfig \
           --region ${{ vars.TF_AWS_REGION }} \
           --name ${{ steps.extract.outputs.cluster_name }}
+
+    - name: add-eks
+      run: |
+        helm repo add eks https://aws.github.io/eks-charts
         
     - name: install-remote
       run: |
@@ -82,7 +86,7 @@ jobs:
         helm upgrade -i smart-media ./helm-charts/smart-media \
           --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media \
           # --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
-          # --set env.dynamoDbTable=${{ steps.extract.outputs.dynamodb_table }} \
+          # --set env.dynamoDbStatusTable=${{ steps.extract.outputs.dynamodb_status_table }} \
           # --set env.s3MediaTable=${{ steps.extract.outputs.s3_media_table }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
           --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} \

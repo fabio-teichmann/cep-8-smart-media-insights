@@ -9,11 +9,11 @@
 | Evaluate removing Kinesis	| (b) Desirable | If only one processing step is used (S3 triggers Lambda), Kinesis can be skipped for MVP. Document decoupling benefits if scaling later. |
 | Optional validation or fraud detection before upload | (c) Cosmetic | Could intercept metadata before upload or inspect file headers |
 | App/Helm: Separate endpoints into images/deployments | (a) Critical / (b) Desirable | `/upload-media` is CPU-heavy, `/results` is fast and light. They likely need different scaling long-term. |
-
 | Container Registry Push | (a) Critical | Build & push missing in GHA. Use docker buildx + docker push or GHCR |
 | Docker Image Tagging | (a) Critical | No versioning / SHA tags yet. Use github.sha or semver tied to release tags |
-
 | App Healthchecks | (b) Desirable | Liveness/readiness probes. Important for ALB health + scaling (see below) |
+| S3 media bucket | (b) Desirable | Optionally add versioning and logging. Best practice for prod-like durability/traceability |
+
 
 ---
 

@@ -35,7 +35,7 @@ async def upload_media(response: Response, file: UploadFile = File(...)) -> str:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": "unsupported media type"}
     
-    s3_key = f"{media_type}/{request_id}_{file.filename}"
+    s3_key = f"uploads/{media_type}/{request_id}_{file.filename}"
     
     try:
         r = s3_client.put_object(

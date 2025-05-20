@@ -1,3 +1,4 @@
+# general ######################
 variable "env" {
     type = string
     default = "dev"
@@ -21,8 +22,16 @@ variable "plat-name" {
     }
 }
 
-# module specific ##############
-variable "region" {
+# module specific #################
+variable "kinesis_shard_count" {
+    type = number 
+    default = 1
+}
+
+variable "vpc_private_subnets" {
+    type = list(string)
+}
+
+variable "lambda_sg_id" {
     type = string
-    default = "us-east-1"
 }
