@@ -51,3 +51,12 @@ resource "aws_security_group_rule" "bastion_to_nodes" {
   source_security_group_id = var.bastion_sg_id
   security_group_id        = module.eks.node_security_group_id
 }
+
+data "aws_eks_cluster" "smart-media" {
+  name = module.eks.cluster_name
+  depends_on = [ module.eks ]
+}
+
+data "aws_iam_openid_connect_provider" "eks" {
+  url = data.aws_eks_cluster.webshop.identity[0].oidc[0].issuer
+}
