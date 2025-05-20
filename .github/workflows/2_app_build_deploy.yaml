@@ -65,10 +65,6 @@ jobs:
         aws eks update-kubeconfig \
           --region ${{ vars.TF_AWS_REGION }} \
           --name ${{ steps.extract.outputs.cluster_name }}
-
-    - name: add-eks
-      run: |
-        helm repo add eks https://aws.github.io/eks-charts
         
     - name: install-remote
       run: |
