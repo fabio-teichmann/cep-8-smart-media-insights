@@ -9,3 +9,15 @@ output "openid_connect_eks_arn" {
 output "openid_connect_eks_url" {
     value = data.aws_iam_openid_connect_provider.eks.url
 }
+
+output "cluster_name" {
+    value = module.eks.cluster_name
+}
+
+output "irsa_role_arn" {
+    value = aws_iam_role.irsa_role.arn
+}
+
+output "eks_svc_acc_name" {
+    value = var.eks_svc_acc_name
+}
