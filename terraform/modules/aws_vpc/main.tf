@@ -18,3 +18,89 @@ module "vpc" {
         Environment = var.env
     }
 }
+
+# Security Groups 
+# -- for Endpoints
+resource "aws_security_group" "vpc_enpoint_sg" {
+    vpc_id = module.vpc.id 
+
+    tags = {
+        Name = "${var.plat-name}-vpc-endpoint-sg"
+        Environment = var.env 
+        Terraform = true
+    }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_https" {
+    for_each = toset(module.cpv.private_subnets_cidr_blocks)
+
+    security_group_id = aws_security_group.vpc_enpoint_sg.id 
+    ip_protocol = "tcp"
+    from_port = 443 
+    to_port = 443
+    cidr_ipv4 = each.value
+}
+
+resource "aws_vpc_security_group_egress_rule" "all_out" {
+    security_group_id = aws_security_group.vpc_enpoint_sg.id
+    ip_protocol = "-1"
+    from_port = 0 
+    to_port = 0 
+    cidr_ipv4 = ["0.0.0.0/0"]
+}
+
+# -- for Lambdas
+resource "aws_security_group" "lambda_sg" {
+  vpc_id = module.vpc.id
+
+  tags = {
+        Name = "${var.plat-name}-vpc-endpoint-sg"
+        Environment = var.env 
+        Terraform = true
+    }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_https_lambda" {
+  for_each = toset(module.vpc.private_subnets_cidr_blocks)
+
+  security_group_id = aws_security_group.lambda_sg.id
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_ipv4         = each.value
+}
+
+
+resource "aws_vpc_security_group_egress_rule" "all_out_lambda" {
+    security_group_id = aws_security_group.lambda_sg.id
+    ip_protocol = "-1"
+    from_port = 0 
+    to_port = 0 
+    cidr_ipv4 = ["0.0.0.0/0"]
+}
+
+
+
+# VPC Endpoint(s) ############
+resource "aws_vpc_endpoint" "s3" {
+    vpc_id = module.vpc.id 
+    service_name = "com.amazonaws.${var.region}.s3"
+    route_table_ids = module.vpc.private_route_table_ids
+}
+
+resource "aws_vpc_endpoint" "dynamo_db" {
+    vpc_id = module.vpc.id 
+    service_name = "com.amazonaws.${var.region}.dynamodb"
+    route_table_ids = module.vpc.private_route_table_ids
+}
+
+resource "aws_vpc_endpoint" "kinesis_stream" {
+    vpc_id = module.vpc.id 
+    service_name = "com.amazonaws.${var.region}.kinesis"
+    vpc_endpoint_type = "Interface"
+
+    private_dns_enabled = true
+
+    subnet_ids = [for subnet in module.vpc.private_subnets : subnet.id]
+    security_group_ids = [aws_security_group.vpc_enpoint_sg.id]
+}
