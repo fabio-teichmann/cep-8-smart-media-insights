@@ -51,3 +51,60 @@ resource "aws_security_group_rule" "bastion_to_nodes" {
   source_security_group_id = var.bastion_sg_id
   security_group_id        = module.eks.node_security_group_id
 }
+
+# IRSA for EKS ##############
+data "aws_eks_cluster" "smart-media" {
+  name = module.eks.cluster_name
+  depends_on = [ module.eks ]
+}
+
+data "aws_iam_openid_connect_provider" "eks" {
+  url = data.aws_eks_cluster.smart-media.identity[0].oidc[0].issuer 
+}
+
+data "aws_iam_policy_document" "eks_irsa_policies" {
+  statement {
+    effect = "Allow"
+    principals {
+      type = "Federated"
+      identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
+    } 
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    condition {
+      test = "StringEquals"
+      variable = "${replace(data.aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
+      values = ["system:serviceaccount:${var.app_namespace}:${var.eks_svc_acc_name}"]
+    }
+  }
+}
+
+resource "aws_iam_role" "irsa_role" {
+  name = "${var.plat-name}-eks-irsa-role"
+  assume_role_policy = data.aws_iam_policy_document.eks_irsa_policies.json
+}
+
+data "aws_iam_policy_document" "irsa_policies" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "kinesis:PutRecord",
+      "kinesis:PutRecords",
+      "s3:PutObject",
+      "dynamodb:GetItem",
+      "dynamodb:GetItems"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "eks_irsa_policy" {
+  name = "${var.plat-name}-eks-irsa-policies"
+  policy = data.aws_iam_policy_document.irsa_policies.json
+}
+
+resource "aws_iam_role_policy_attachment" "attach_irsa_policies" {
+  role = aws_iam_role.irsa_role.name
+  policy_arn = aws_iam_policy.eks_irsa_policy.arn
+}

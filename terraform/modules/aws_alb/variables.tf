@@ -23,15 +23,29 @@ variable "plat-name" {
 }
 
 # module specific ######################
-variable "public_subnets" {
-    type = list(string)
-}
+# variable "public_subnets" {
+#     type = list(string)
+# }
 
-variable "log_bucket" {
-    description = "id of S3 bucket for log storage"
-    type = string
-}
+# variable "log_bucket" {
+#     description = "id of S3 bucket for log storage"
+#     type = string
+# }
 
-variable "vpc_id" {
-    type = string
-}
+# variable "vpc_id" {
+#     type = string
+# }
+
+
+variable "eks_namespace" { 
+    type = string 
+    default = "kube-system"
+    }
+
+variable "openid_connect_eks_arn" { 
+    type = string 
+    }
+
+variable "openid_connect_eks_url" { 
+    type = string 
+    }

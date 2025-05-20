@@ -53,3 +53,12 @@ variable "bastion_sg_id" {
 variable "user-ip" {
     type = string
 }
+
+variable "app_namespace" {
+    type = string
+    default = "default"
+}
+
+variable "eks_svc_acc_name" {
+    type = string
+}
