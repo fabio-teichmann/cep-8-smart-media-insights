@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 output "vpc_id" {
     value = module.vpc.vpc_id
 }
@@ -30,4 +28,3 @@ output "kinesis_stream_name" {
 }
 
 # ML Service Pipeline
->>>>>>> Stashed changes

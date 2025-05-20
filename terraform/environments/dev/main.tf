@@ -11,24 +11,10 @@ module "bastion_host" {
     user-ip = "" # TODO
     vpc_id = module.vpc.vpc_id
 
-    bastion_ami_id = ""
+    bastion_ami_id = "" # TODO
 
     env = var.env
     plat-name = var.plat-name
-
-    depends_on = [ module.vpc ]
-}
-
-module "alb" {
-    source = "../../modules/aws_alb"
-
-    env = var.env
-    plat-name = var.plat-name
-
-    public_subnets = module.vpc.vpc_public_subnets
-    vpc_id = module.vpc.vpc_id
-
-    log_bucket = "" # TODO
 
     depends_on = [ module.vpc ]
 }
@@ -50,5 +36,17 @@ module "eks" {
 
     user-ip = "" # TODO
 
-    depends_on = [ module.alb, module.vpc, module.bastion_host ]
+    depends_on = [ module.vpc, module.bastion_host ]
+}
+
+module "alb" {
+    source = "../../modules/aws_alb"
+
+    plat-name = var.plat-name
+    env = var.env
+
+    openid_connect_eks_arn = module.eks.openid_connect_eks_arn
+    openid_connect_eks_url = module.eks.openid_connect_eks_url
+
+    depends_on = [ module.eks ]
 }

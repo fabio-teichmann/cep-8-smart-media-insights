@@ -14,6 +14,7 @@
 | App Healthchecks | (b) Desirable | Liveness/readiness probes. Important for ALB health + scaling (see below) |
 | S3 media bucket | (b) Desirable | Optionally add versioning and logging. Best practice for prod-like durability/traceability |
 
+
 ---
 
 ### Liveness Probes
