@@ -1,0 +1,37 @@
+name: (3) Destroy Environment 
+
+on:
+  workflow_dispatch:
+
+jobs:
+  destroy-dev:
+    runs-on: ubuntu-latest 
+
+    steps:
+    - name: checkout 
+      uses: actions/checkout@v4
+
+    - name: setup-terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: authenticate-to-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ vars.AWS_REGION }}
+
+    - name: acquire-backend.config
+      run: |
+        aws s3 cp s3://${{ vars.AWS_STATIC_BUCKET }}/terraform/backend/backend.config ./terraform/environments/dev/backend.config
+    
+    - name: destroy-dev
+      working-directory: terraform/environments/dev/
+      run: |
+        terraform init -backend-config=backend.config
+        terraform destroy -auto-approve \
+          -var="plat_name=smart-media" \
+          -var="env=dev" \
+          -var="eks_svc_acc_name=smart-media-cluster-svc-acc" \
+          -var="user_ip=${{ vars.USER_IP_ADDRESS }}"
+        
