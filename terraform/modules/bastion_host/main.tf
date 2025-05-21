@@ -9,7 +9,7 @@ resource "aws_vpc_security_group_ingress_rule" "bastion_ingress" {
 
   from_port = 22
   to_port   = 22
-  cidr_ipv4 = "${var.user_ip}/36"
+  cidr_ipv4 = "${var.user_ip}/32"
 }
 
 resource "aws_vpc_security_group_egress_rule" "bastion_egress" {
