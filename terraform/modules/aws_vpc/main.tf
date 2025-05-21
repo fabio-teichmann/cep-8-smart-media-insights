@@ -22,7 +22,7 @@ module "vpc" {
 # Security Groups 
 # -- for Endpoints
 resource "aws_security_group" "vpc_enpoint_sg" {
-  vpc_id = module.vpc.id
+  vpc_id = module.vpc.vpc_id
 
   tags = {
     Name        = "${var.plat_name}-vpc-endpoint-sg"
@@ -51,7 +51,7 @@ resource "aws_vpc_security_group_egress_rule" "all_out" {
 
 # -- for Lambdas
 resource "aws_security_group" "lambda_sg" {
-  vpc_id = module.vpc.id
+  vpc_id = module.vpc.vpc_id
 
   tags = {
     Name        = "${var.plat_name}-vpc-endpoint-sg"
@@ -83,19 +83,19 @@ resource "aws_vpc_security_group_egress_rule" "all_out_lambda" {
 
 # VPC Endpoint(s) ############
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id          = module.vpc.id
+  vpc_id          = module.vpc.vpc_id
   service_name    = "com.amazonaws.${var.region}.s3"
   route_table_ids = module.vpc.private_route_table_ids
 }
 
 resource "aws_vpc_endpoint" "dynamo_db" {
-  vpc_id          = module.vpc.id
+  vpc_id          = module.vpc.vpc_id
   service_name    = "com.amazonaws.${var.region}.dynamodb"
   route_table_ids = module.vpc.private_route_table_ids
 }
 
 resource "aws_vpc_endpoint" "kinesis_stream" {
-  vpc_id            = module.vpc.id
+  vpc_id            = module.vpc.vpc_id
   service_name      = "com.amazonaws.${var.region}.kinesis"
   vpc_endpoint_type = "Interface"
 

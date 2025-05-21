@@ -51,3 +51,15 @@ module "alb" {
 
   depends_on = [module.eks]
 }
+
+module "ingestion" {
+    source = "../../modules/ingestion"
+
+    plat_name = var.plat_name
+    env = var.env
+
+    vpc_private_subnets = module.vpc.vpc_private_subnets
+    lambda_sg_id = module.vpc.lambda_sg_id
+
+    depends_on = [ module.vpc ]
+}
