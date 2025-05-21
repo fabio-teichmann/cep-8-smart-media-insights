@@ -35,3 +35,7 @@ variable "vpc_id" {
 variable "user_ip" {
   type = string
 }
+
+variable "vpc_public_subnets" {
+  type = string
+}

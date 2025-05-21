@@ -30,6 +30,7 @@ module "bastion_host" {
   vpc_id  = module.vpc.vpc_id
 
   bastion_ami_id = var.bastion_ami_id
+  vpc_public_subnets = module.vpc.vpc_public_subnets
 
   env       = var.env
   plat_name = var.plat_name

@@ -39,6 +39,11 @@ jobs:
       run: |
         bash scripts/lambda_ingest/build_lambda.sh
 
+    - uses: actions/upload-artifact@v4 
+      with:
+        name: lambda-ingest
+        path: ./scripts/lambda_ingest/lambda_ingest.zip
+
   apply-infra:
     needs: [ package-lambda ]
     runs-on: ubuntu-latest
@@ -47,6 +52,11 @@ jobs:
 
     - name: setup-terraform
       uses: hashicorp/setup-terraform@v3
+
+    - uses: download-artifact@v4 
+      with:
+        name: lambda-ingest
+        path: ./scripts/lambda_ingest/lambda_ingest.zip
 
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
