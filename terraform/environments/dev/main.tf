@@ -1,3 +1,21 @@
+terraform {
+  backend "s3" {
+    bucket         = ""
+    key            = ""
+    region         = ""
+    dynamodb_table = ""
+    encrypt        = ""
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  required_version = ">= 1.3.0"
+}
+
+
 module "vpc" {
   source = "../../modules/aws_vpc"
 
@@ -53,13 +71,13 @@ module "alb" {
 }
 
 module "ingestion" {
-    source = "../../modules/ingestion"
+  source = "../../modules/ingestion"
 
-    plat_name = var.plat_name
-    env = var.env
+  plat_name = var.plat_name
+  env       = var.env
 
-    vpc_private_subnets = module.vpc.vpc_private_subnets
-    lambda_sg_id = module.vpc.lambda_sg_id
+  vpc_private_subnets = module.vpc.vpc_private_subnets
+  lambda_sg_id        = module.vpc.lambda_sg_id
 
-    depends_on = [ module.vpc ]
+  depends_on = [module.vpc]
 }

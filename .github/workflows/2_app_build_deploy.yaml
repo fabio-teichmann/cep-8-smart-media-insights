@@ -83,7 +83,7 @@ jobs:
 
   deploy-app:
     runs-on: ubuntu-latest
-    needs: [ apply-infra ]
+    needs: [ build-app, apply-infra ]
     steps:
     - uses: actions/checkout@v4
 
