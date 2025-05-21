@@ -101,6 +101,6 @@ resource "aws_vpc_endpoint" "kinesis_stream" {
 
   private_dns_enabled = true
 
-  subnet_ids         = [for subnet in module.vpc.private_subnets : subnet.id]
+  subnet_ids         = module.vpc.private_subnets 
   security_group_ids = [aws_security_group.vpc_enpoint_sg.id]
 }
