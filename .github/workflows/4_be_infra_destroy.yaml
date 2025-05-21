@@ -1,4 +1,4 @@
-name: (2) Destroy BE Infrastructure
+name: (4) Destroy BE Infrastructure
 
 on:
   workflow_dispatch:
