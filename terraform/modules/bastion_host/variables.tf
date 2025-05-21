@@ -37,5 +37,5 @@ variable "user_ip" {
 }
 
 variable "vpc_public_subnets" {
-  type = string
+  type = list(string)
 }

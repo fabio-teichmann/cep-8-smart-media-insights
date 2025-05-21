@@ -26,7 +26,26 @@ jobs:
         push: true
         tags: ${{ vars.DOCKERHUB_USER }}/smart-media:latest
 
-  package-lambda:
+  # package-lambda:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+
+  #   - uses: actions/setup-python@v5
+  #     with:
+  #       python-version: 3.12
+    
+  #   - name: prepare-packages
+  #     run: |
+  #       bash scripts/lambda_ingest/build_lambda.sh
+
+  #   - uses: actions/upload-artifact@v4 
+  #     with:
+  #       name: lambda-ingest
+  #       path: ./scripts/lambda_ingest/lambda_ingest.zip
+
+  apply-infra:
+    needs: [ package-lambda ]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -39,24 +58,13 @@ jobs:
       run: |
         bash scripts/lambda_ingest/build_lambda.sh
 
-    - uses: actions/upload-artifact@v4 
-      with:
-        name: lambda-ingest
-        path: ./scripts/lambda_ingest/lambda_ingest.zip
-
-  apply-infra:
-    needs: [ package-lambda ]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-
     - name: setup-terraform
       uses: hashicorp/setup-terraform@v3
 
-    - uses: actions/download-artifact@v4 
-      with:
-        name: lambda-ingest
-        path: ./scripts/lambda_ingest/lambda_ingest.zip
+    # - uses: actions/download-artifact@v4 
+    #   with:
+    #     name: lambda-ingest
+    #     path: ./scripts/lambda_ingest/lambda_ingest.zip
 
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
