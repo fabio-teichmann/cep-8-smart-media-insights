@@ -3,7 +3,7 @@ data "aws_availability_zones" "available" {}
 module "vpc" {
     source = "terraform-aws-modules/vpc/aws"
 
-    name = "${var.plat-name}-vpc"
+    name = "${var.plat_name}-vpc"
     cidr = "10.0.0.0/16"
 
     azs = [slice(data.aws_availability_zones.available.names, 0, 2)]
@@ -25,7 +25,7 @@ resource "aws_security_group" "vpc_enpoint_sg" {
     vpc_id = module.vpc.id 
 
     tags = {
-        Name = "${var.plat-name}-vpc-endpoint-sg"
+        Name = "${var.plat_name}-vpc-endpoint-sg"
         Environment = var.env 
         Terraform = true
     }
@@ -54,7 +54,7 @@ resource "aws_security_group" "lambda_sg" {
   vpc_id = module.vpc.id
 
   tags = {
-        Name = "${var.plat-name}-vpc-endpoint-sg"
+        Name = "${var.plat_name}-vpc-endpoint-sg"
         Environment = var.env 
         Terraform = true
     }

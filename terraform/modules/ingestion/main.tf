@@ -34,7 +34,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "media_bucket_lifecycle" {
 
 # DynamoDB table ######################
 resource "aws_dynamodb_table" "request_status_lookup" {
-    name = "${var.plat-name}-request-status"
+    name = "${var.plat_name}-request-status"
     billing_mode = "PROVISIONED"
     hash_key = "request_id"
     read_capacity  = 5
@@ -87,7 +87,7 @@ resource "aws_dynamodb_table" "request_status_lookup" {
 
 # Kinesis Data Stream #################
 resource "aws_kinesis_stream" "ingest_stream" {
-    name = "${var.plat-name}-kinesis-ingest"
+    name = "${var.plat_name}-kinesis-ingest"
     shard_count = var.kinesis_shard_count
 
     shard_level_metrics = [
@@ -100,7 +100,7 @@ resource "aws_kinesis_stream" "ingest_stream" {
     }
 
     tags = {
-        Name = "${var.plat-name}-kinesis-ingest"
+        Name = "${var.plat_name}-kinesis-ingest"
         Environment = var.env
         Terraform = true
     }

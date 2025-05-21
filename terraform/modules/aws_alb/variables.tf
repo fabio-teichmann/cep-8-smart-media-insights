@@ -9,15 +9,15 @@ variable "env" {
     }
 }
 
-variable "plat-name" {
+variable "plat_name" {
     type = string
 
     validation {
-        condition = length(var.plat-name) != 0
+        condition = length(var.plat_name) != 0
         error_message = "name must be set"
     }
     validation {
-        condition = !can(regex("_", var.plat-name))
+        condition = !can(regex("_", var.plat_name))
         error_message = "name must not contain underscores `_`"
     }
 }

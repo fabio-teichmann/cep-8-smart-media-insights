@@ -9,7 +9,7 @@ resource "aws_vpc_security_group_ingress_rule" "bastion_ingress" {
 
     from_port = 22
     to_port = 22
-    cidr_ipv4 = [var.user-ip]
+    cidr_ipv4 = ["${var.user_ip}/36"]
 }
 
 resource "aws_vpc_security_group_egress_rule" "bastion_egress" {
@@ -42,7 +42,7 @@ resource "aws_instance" "bastion_host" {
     tags = {
         Environment = var.env
         Terraform = true
-        Name = "${var.plat-name}-bastion-host"
+        Name = "${var.plat_name}-bastion-host"
     }
 
     # for later when EKS API endpoint is moved to private only
