@@ -56,27 +56,27 @@
 
 # IRSA (IAM Roles for Service Accounts) for AWS Load Balancer Controller ###############
 data "aws_iam_policy_document" "alb_controller_assume_role" {
-    statement {
-        effect = "Allow"
-        principals {
-            type = "Federated"
-            identifiers = [var.openid_connect_eks_arn]
-        }
-        actions = ["sts:AssumeRoleWithWebIdentity"]
-        condition {
-          test = "StringEquals"
-          variable = "${replace(var.openid_connect_eks_url, "https://", "")}:sub"
-          values = ["system:serviceaccount:${var.eks_namespace}:aws-load-balancer-controller"]
-        }
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Federated"
+      identifiers = [var.openid_connect_eks_arn]
     }
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(var.openid_connect_eks_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:${var.eks_namespace}:aws-load-balancer-controller"]
+    }
+  }
 }
 
 resource "aws_iam_role" "alb_controller" {
-    name = "alb-controller-role"
-    assume_role_policy = aws_iam_policy_document.alb_controller_assume_role.json
+  name               = "alb-controller-role"
+  assume_role_policy = aws_iam_policy_document.alb_controller_assume_role.json
 }
 
 resource "aws_iam_policy_role_attachment" "alb_controller_attach" {
-    role = aws_iam_role.alb_controller.name
-    policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancerControllerPolicy"
+  role       = aws_iam_role.alb_controller.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancerControllerPolicy"
 }

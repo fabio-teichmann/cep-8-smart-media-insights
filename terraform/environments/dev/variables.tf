@@ -1,38 +1,38 @@
 # general ######################
 variable "env" {
-    type = string
-    default = "dev"
+  type    = string
+  default = "dev"
 
-    validation {
-        condition = contains(["dev", "stage", "prod"], var.env)
-        error_message = "value"
-    }
+  validation {
+    condition     = contains(["dev", "stage", "prod"], var.env)
+    error_message = "value"
+  }
 }
 
 variable "plat_name" {
-    type = string
+  type = string
 
-    validation {
-        condition = length(var.plat_name) != 0
-        error_message = "name must be set"
-    }
-    validation {
-        condition = !can(regex("_", var.plat_name))
-        error_message = "name must not contain underscores `_`"
-    }
+  validation {
+    condition     = length(var.plat_name) != 0
+    error_message = "name must be set"
+  }
+  validation {
+    condition     = !can(regex("_", var.plat_name))
+    error_message = "name must not contain underscores `_`"
+  }
 }
 
 variable "eks_svc_acc_name" {
-    type = string
+  type = string
 }
 
 variable "user_ip" {
-    type = string
+  type = string
 }
 
 variable "bastion_ami_id" {
-    type = string
-    default = "ami-0953476d60561c955"
+  type    = string
+  default = "ami-0953476d60561c955"
 }
 # variable "app_alb_port" {
 #     type = number
