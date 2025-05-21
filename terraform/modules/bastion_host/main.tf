@@ -9,7 +9,7 @@ resource "aws_vpc_security_group_ingress_rule" "bastion_ingress" {
 
   from_port = 22
   to_port   = 22
-  cidr_ipv4 = ["${var.user_ip}/36"]
+  cidr_ipv4 = "${var.user_ip}/36"
 }
 
 resource "aws_vpc_security_group_egress_rule" "bastion_egress" {
@@ -17,7 +17,7 @@ resource "aws_vpc_security_group_egress_rule" "bastion_egress" {
   ip_protocol       = "-1"
   from_port         = 0
   to_port           = 0
-  cidr_ipv4         = ["0.0.0.0/0"]
+  cidr_ipv4         = "0.0.0.0/0"
 }
 
 # TODO:
@@ -36,7 +36,7 @@ resource "aws_instance" "bastion_host" {
   subnet_id                   = var.vpc_public_subnets[0]
   associate_public_ip_address = true
 
-  key_name               = aws_key_pair.bastion_key.key_name
+  key_name               = aws_key_pair.bastion_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
 
   tags = {
