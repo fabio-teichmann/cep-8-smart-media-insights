@@ -32,7 +32,7 @@ resource "aws_security_group" "vpc_enpoint_sg" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_https" {
-  for_each = toset(module.cpv.private_subnets_cidr_blocks)
+  for_each = toset(module.vpc.private_subnets_cidr_blocks)
 
   security_group_id = aws_security_group.vpc_enpoint_sg.id
   ip_protocol       = "tcp"
@@ -46,7 +46,7 @@ resource "aws_vpc_security_group_egress_rule" "all_out" {
   ip_protocol       = "-1"
   from_port         = 0
   to_port           = 0
-  cidr_ipv4         = ["0.0.0.0/0"]
+  cidr_ipv4         = "0.0.0.0/0"
 }
 
 # -- for Lambdas
@@ -76,7 +76,7 @@ resource "aws_vpc_security_group_egress_rule" "all_out_lambda" {
   ip_protocol       = "-1"
   from_port         = 0
   to_port           = 0
-  cidr_ipv4         = ["0.0.0.0/0"]
+  cidr_ipv4         = "0.0.0.0/0"
 }
 
 
