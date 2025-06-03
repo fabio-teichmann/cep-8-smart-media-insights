@@ -50,15 +50,15 @@ resource "aws_dynamodb_table" "request_status_lookup" {
     type = "S"
   }
 
-#   attribute {
-#     name = "created_at"
-#     type = "S"
-#   }
-
   attribute {
-    name = "processed_at"
+    name = "created_at"
     type = "S"
   }
+
+#   attribute {
+#     name = "processed_at"
+#     type = "S"
+#   }
 
 #   attribute {
 #     name = "result"
