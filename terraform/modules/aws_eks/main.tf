@@ -23,6 +23,8 @@ module "eks" {
     }
   }
 
+  iam_role_additional_policies = []
+
   # enabled only for development to troubleshoot with `kubectl` from local.
   # will be disabled once bastion is set up
   cluster_endpoint_public_access       = true
