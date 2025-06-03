@@ -28,7 +28,7 @@ jobs:
       run: |
         terraform init
         terraform destroy -auto-approve \
-          -var="aws_region=${{ vars.AWS_REGION }}"
+          # -var="aws_region=${{ vars.AWS_REGION }}"
 
     - name: clean-up-static-bucket
       run: |
