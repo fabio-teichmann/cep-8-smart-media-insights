@@ -18,9 +18,9 @@ module "eks" {
 
       instance_types = ["t3.medium"]
       capacity_type  = "SPOT"
+
+      iam_role_attach_cni_policy = false 
     }
-    
-    iam_role_attach_cni_policy = false
   }
 
   # enabled only for development to troubleshoot with `kubectl` from local.
