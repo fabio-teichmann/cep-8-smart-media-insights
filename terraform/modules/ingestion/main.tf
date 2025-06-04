@@ -123,6 +123,14 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 data "aws_iam_policy_document" "lambda_iam_policies" {
+    statement {
+        effect = "Allow"
+        actions = [
+            "ec2:CreateNetworkInterface"
+        ]
+        resources = ["*"]
+    }
+    
   statement {
     effect = "Allow"
     actions = [
@@ -167,7 +175,7 @@ locals {
 }
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "../../scripts/lambda/kinesis-to-dynamo.py"
+  source_file = "../../../scripts/lambda/kinesis-to-dynamo.py"
   output_path = "lambda_payload.zip"
 }
 
