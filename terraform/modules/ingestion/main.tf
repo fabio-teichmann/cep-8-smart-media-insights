@@ -130,7 +130,7 @@ data "aws_iam_policy_document" "lambda_iam_policies" {
         ]
         resources = ["*"]
     }
-    
+
   statement {
     effect = "Allow"
     actions = [
@@ -173,11 +173,11 @@ locals {
   lambda_ingest_path = "${path.module}/../../../scripts/lambda_ingest"
 
 }
-data "archive_file" "lambda" {
-  type        = "zip"
-  source_file = "../../../scripts/lambda/kinesis-to-dynamo.py"
-  output_path = "lambda_payload.zip"
-}
+# data "archive_file" "lambda" {
+#   type        = "zip"
+#   source_file = "../../../scripts/lambda_ingest/kinesis-to-dynamo.py"
+#   output_path = "lambda_payload.zip"
+# }
 
 resource "aws_lambda_function" "kinesis_to_dynamo" {
   filename      = "${local.lambda_ingest_path}/lambda_ingest.zip"
