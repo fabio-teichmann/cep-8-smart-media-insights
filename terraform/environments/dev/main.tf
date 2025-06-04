@@ -39,7 +39,7 @@ module "bastion_host" {
   env       = var.env
   plat_name = var.plat_name
 
-  depends_on = [module.vpc]
+#   depends_on = [module.vpc]
 }
 
 module "eks" {
@@ -60,7 +60,7 @@ module "eks" {
 
   user_ip = var.user_ip
 
-  depends_on = [module.vpc, module.bastion_host]
+#   depends_on = [module.vpc, module.bastion_host]
 }
 
 module "alb" {
