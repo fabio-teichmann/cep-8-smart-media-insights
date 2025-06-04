@@ -23,7 +23,7 @@ module "eks" {
     }
   }
 
-  iam_role_additional_policies = []
+  iam_role_additional_policies = {}
 
   # enabled only for development to troubleshoot with `kubectl` from local.
   # will be disabled once bastion is set up
