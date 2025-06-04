@@ -86,3 +86,14 @@ module "ingestion" {
 
   depends_on = [module.vpc]
 }
+
+module "vpc_endpoints" {
+    source = "../../modules/vpc_endpoints"
+
+    vpc_id = module.vpc.vpc_id
+    vpc_private_subnets = module.vpc.vpc_private_subnets
+    vpc_endpoint_sg_id = module.vpc.vpc_endpoint_sg_id
+    vpc_private_route_table_ids = module.vpc.vpc_private_route_table_ids
+
+    depends_on = [ module.ingestion ]
+}

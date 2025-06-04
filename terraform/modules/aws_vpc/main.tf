@@ -81,26 +81,26 @@ resource "aws_vpc_security_group_egress_rule" "all_out_lambda" {
 
 
 
-# VPC Endpoint(s) ############
-resource "aws_vpc_endpoint" "s3" {
-  vpc_id          = module.vpc.vpc_id
-  service_name    = "com.amazonaws.${var.region}.s3"
-  route_table_ids = module.vpc.private_route_table_ids
-}
+# # VPC Endpoint(s) ############
+# resource "aws_vpc_endpoint" "s3" {
+#   vpc_id          = module.vpc.vpc_id
+#   service_name    = "com.amazonaws.${var.region}.s3"
+#   route_table_ids = module.vpc.private_route_table_ids
+# }
 
-resource "aws_vpc_endpoint" "dynamo_db" {
-  vpc_id          = module.vpc.vpc_id
-  service_name    = "com.amazonaws.${var.region}.dynamodb"
-  route_table_ids = module.vpc.private_route_table_ids
-}
+# resource "aws_vpc_endpoint" "dynamo_db" {
+#   vpc_id          = module.vpc.vpc_id
+#   service_name    = "com.amazonaws.${var.region}.dynamodb"
+#   route_table_ids = module.vpc.private_route_table_ids
+# }
 
-resource "aws_vpc_endpoint" "kinesis_stream" {
-  vpc_id            = module.vpc.vpc_id
-  service_name      = "com.amazonaws.${var.region}.kinesis"
-  vpc_endpoint_type = "Interface"
+# resource "aws_vpc_endpoint" "kinesis_stream" {
+#   vpc_id            = module.vpc.vpc_id
+#   service_name      = "com.amazonaws.${var.region}.kinesis"
+#   vpc_endpoint_type = "Interface"
 
-  private_dns_enabled = true
+#   private_dns_enabled = true
 
-  subnet_ids         = module.vpc.private_subnets 
-  security_group_ids = [aws_security_group.vpc_enpoint_sg.id]
-}
+#   subnet_ids         = module.vpc.private_subnets 
+#   security_group_ids = [aws_security_group.vpc_enpoint_sg.id]
+# }
