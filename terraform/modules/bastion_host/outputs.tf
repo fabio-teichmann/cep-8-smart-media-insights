@@ -12,5 +12,5 @@ output "bastion_sg" {
 }
 
 output "bastion_id" {
-  value = aws_isntance.bastion_host.id
+  value = aws_instance.bastion_host.id
 }
