@@ -76,7 +76,14 @@ resource "aws_iam_role" "alb_controller" {
   assume_role_policy = data.aws_iam_policy_document.alb_controller_assume_role.json
 }
 
+resource "aws_iam_policy" "alb_controller_policy" {
+  name        = "AmazonEKSLoadBalancerControllerPolicy"
+  description = "Policy required for AWS Load Balancer Controller"
+  policy      = file("${path.module}/iam-policy-alb-controller.json")
+}
+
 resource "aws_iam_role_policy_attachment" "alb_controller_attach" {
   role       = aws_iam_role.alb_controller.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancerController"
+  policy_arn = aws_iam_policy.alb_controller_policy.arn
+  # policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancerController"
 }
