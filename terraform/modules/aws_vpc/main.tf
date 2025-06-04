@@ -44,8 +44,8 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https" {
 resource "aws_vpc_security_group_egress_rule" "all_out" {
   security_group_id = aws_security_group.vpc_enpoint_sg.id
   ip_protocol       = "-1"
-  from_port         = 0
-  to_port           = 0
+#   from_port         = 0
+#   to_port           = 0
   cidr_ipv4         = "0.0.0.0/0"
 }
 
@@ -74,8 +74,8 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https_lambda" {
 resource "aws_vpc_security_group_egress_rule" "all_out_lambda" {
   security_group_id = aws_security_group.lambda_sg.id
   ip_protocol       = "-1"
-  from_port         = 0
-  to_port           = 0
+#   from_port         = 0
+#   to_port           = 0
   cidr_ipv4         = "0.0.0.0/0"
 }
 

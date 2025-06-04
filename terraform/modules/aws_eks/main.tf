@@ -86,10 +86,10 @@ module "eks" {
       instance_types = ["t3.medium"]
       capacity_type  = "SPOT"
 
-      iam_role_attach_cni_policy = false 
+      update_launch_template_default_version = false
+      # iam_role_attach_cni_policy = false 
     }
   }
-
   # enabled only for development to troubleshoot with `kubectl` from local.
   # will be disabled once bastion is set up
   cluster_endpoint_public_access       = true
