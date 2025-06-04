@@ -63,17 +63,17 @@ module "eks" {
 #   depends_on = [module.vpc, module.bastion_host]
 }
 
-module "alb" {
-  source = "../../modules/aws_alb"
+# module "alb" {
+#   source = "../../modules/aws_alb"
 
-  plat_name = var.plat_name
-  env       = var.env
+#   plat_name = var.plat_name
+#   env       = var.env
 
-  openid_connect_eks_arn = module.eks.openid_connect_eks_arn
-  openid_connect_eks_url = module.eks.openid_connect_eks_url
+#   openid_connect_eks_arn = module.eks.openid_connect_eks_arn
+#   openid_connect_eks_url = module.eks.openid_connect_eks_url
 
-  depends_on = [module.eks]
-}
+#   depends_on = [module.eks]
+# }
 
 module "ingestion" {
   source = "../../modules/ingestion"
