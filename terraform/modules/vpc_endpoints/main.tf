@@ -15,7 +15,7 @@ resource "aws_vpc_endpoint" "dynamo_db" {
 
 resource "aws_vpc_endpoint" "kinesis_stream" {
   vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.${var.region}.kinesis"
+  service_name      = "com.amazonaws.${var.region}.kinesis-streams"
   vpc_endpoint_type = "Interface"
 
   private_dns_enabled = true
