@@ -134,22 +134,41 @@ jobs:
         svc_acc_annot=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
         echo "svc_acc_annot=$svc_acc_annot" >> "$GITHUB_OUTPUT"
 
+        bastion_id=$(jq -r '.bastion_id.value' tf-outputs.json)
+        echo "bastion_id=$bastion_id" >> "$GITHUB_OUTPUT"
+
     - name: set-up-kubeconfig-for-eks
       run: |
         aws eks update-kubeconfig \
           --region ${{ vars.AWS_REGION }} \
           --name ${{ steps.extract.outputs.cluster_name }}
-        
-    - name: install-remote
-      run: |
-        helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \
-          --namespace kube-system \
-          --set clusterName=${{ steps.extract.outputs.cluster_name }} \
-          --set serviceAccount.create=true \
-          --set serviceAccount.name=aws-load-balancer-controller \
-          --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${{ steps.extract.outputs.aws_account_id }}:role/alb-controller-role" \
-          --set region=${{ vars.AWS_REGION }} \
-          --set vpcId=${{ steps.extract.outputs.vpc_id }}
+
+    - name: install-remote-bastion
+      run: |  
+        aws ssm send-command \
+          --document-name "AWS-RunShellScript" \
+          --instance-ids ${{ steps.extract.outputs.bastion_id }} \
+          --comment "Apply EKS Helm chart" \
+          --parameters commands=["helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \
+            --namespace kube-system \
+            --set clusterName=${{ steps.extract.outputs.cluster_name }} \
+            --set serviceAccount.create=true \
+            --set serviceAccount.name=aws-load-balancer-controller \
+            --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${{ steps.extract.outputs.aws_account_id }}:role/alb-controller-role" \
+            --set region=${{ vars.AWS_REGION }} \
+            --set vpcId=${{ steps.extract.outputs.vpc_id }}"] \
+          --region ${{ vars.AWS_REGION }}
+
+    # - name: install-remote
+    #   run: |
+    #     helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \
+    #       --namespace kube-system \
+    #       --set clusterName=${{ steps.extract.outputs.cluster_name }} \
+    #       --set serviceAccount.create=true \
+    #       --set serviceAccount.name=aws-load-balancer-controller \
+    #       --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${{ steps.extract.outputs.aws_account_id }}:role/alb-controller-role" \
+    #       --set region=${{ vars.AWS_REGION }} \
+    #       --set vpcId=${{ steps.extract.outputs.vpc_id }}
 
     - name: deploy-helm-chart
       run: |

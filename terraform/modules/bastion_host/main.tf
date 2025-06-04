@@ -30,6 +30,33 @@ resource "aws_key_pair" "bastion_key_pair" {
   public_key = tls_private_key.bastion_key.public_key_openssh
 }
 
+# IAM Profile ########
+resource "aws_iam_role" "bastion_ssm_role" {
+  name = "${var.plat_name}-bastion-ssm-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "bastion_ssm_policy" {
+  role       = aws_iam_role.bastion_ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "bastion_ssm_profile" {
+  name = "${var.plat_name}-bastion-ssm-profile"
+  role = aws_iam_role.bastion_ssm_role.name
+}
+
+
 resource "aws_instance" "bastion_host" {
   ami                         = var.bastion_ami_id
   instance_type               = "t2.small"
@@ -38,6 +65,8 @@ resource "aws_instance" "bastion_host" {
 
   key_name               = aws_key_pair.bastion_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
+
+  iam_instance_profile = aws_iam_instance_profile.bastion_ssm_profile.name
 
   tags = {
     Environment = var.env
@@ -49,7 +78,11 @@ resource "aws_instance" "bastion_host" {
   user_data = <<-EOF
     #!/bin/bash
     yum update -y
-    yum install -y curl unzip
+    yum install -y curl unzip amazon-ssm-agent
+
+    systemctl enable amazon-ssm-agent
+    systemctl start amazon-ssm-agent
+    
     curl "https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.0/2023-06-23/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
     chmod +x /usr/local/bin/kubectl
     EOF
