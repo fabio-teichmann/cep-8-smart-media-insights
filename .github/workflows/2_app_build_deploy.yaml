@@ -175,7 +175,7 @@ jobs:
         aws ssm send-command \
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
-          --comment "deploy helm chart on EKS"
+          --comment "deploy helm chart on EKS" \
           --parameters commands=["helm upgrade -i smart-media ./helm-charts/smart-media \
             --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media \
             --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
