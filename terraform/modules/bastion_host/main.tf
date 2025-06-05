@@ -56,7 +56,24 @@ resource "aws_iam_instance_profile" "bastion_ssm_profile" {
   role = aws_iam_role.bastion_ssm_role.name
 }
 
+# ENV VARS for start up script
+# data "template_file" "user_data" {
+#   template = file("${path.module}//../../../scripts/bootstrap/bastion-startup.sh")
 
+#   vars = {
+#     CLUSTER_NAME = var.eks_cluster_name
+#     AWS_REGION       = var.region
+#   }
+# }
+
+locals {
+  user_data_rendered = templatefile("${path.module}/../../../scripts/bootstrap/bastion-startup.sh", {
+    CLUSTER_NAME = var.eks_cluster_name
+    AWS_REGION       = var.region
+  })
+}
+
+# Bastion Host 
 resource "aws_instance" "bastion_host" {
   ami                         = var.bastion_ami_id
   instance_type               = "t2.small"
@@ -75,7 +92,8 @@ resource "aws_instance" "bastion_host" {
   }
 
   # for later when EKS API endpoint is moved to private only
-  user_data = file("${path.module}/../../../scripts/bootstrap/bastion-startup.sh")
+  user_data = local.user_data_rendered
+#   user_data = file("${path.module}/../../../scripts/bootstrap/bastion-startup.sh")
 
 }
 

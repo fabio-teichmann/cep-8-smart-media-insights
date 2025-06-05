@@ -38,6 +38,7 @@ module "bastion_host" {
 
   env       = var.env
   plat_name = var.plat_name
+  eks_cluster_name = module.eks.cluster_name
 
 #   depends_on = [module.vpc]
 }
