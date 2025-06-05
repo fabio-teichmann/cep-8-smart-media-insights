@@ -55,15 +55,15 @@ resource "aws_dynamodb_table" "request_status_lookup" {
     type = "S"
   }
 
-  attribute {
-    name = "processed_at"
-    type = "S"
-  }
+#   attribute {
+#     name = "processed_at"
+#     type = "S"
+#   }
 
-  attribute {
-    name = "result"
-    type = "S"
-  }
+#   attribute {
+#     name = "result"
+#     type = "S"
+#   }
 
   # NOTE: deferred for now;
   # ttl {
@@ -123,6 +123,16 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 data "aws_iam_policy_document" "lambda_iam_policies" {
+    statement {
+        effect = "Allow"
+        actions = [
+            "ec2:CreateNetworkInterface",
+            "ec2:DescribeNetworkInterfaces",
+            "ec2:DeleteNetworkInterface"
+        ]
+        resources = ["*"]
+    }
+
   statement {
     effect = "Allow"
     actions = [
@@ -165,19 +175,19 @@ locals {
   lambda_ingest_path = "${path.module}/../../../scripts/lambda_ingest"
 
 }
-data "archive_file" "lambda" {
-  type        = "zip"
-  source_file = "../../scripts/lambda/kinesis-to-dynamo.py"
-  output_path = "lambda_payload.zip"
-}
+# data "archive_file" "lambda" {
+#   type        = "zip"
+#   source_file = "../../../scripts/lambda_ingest/kinesis-to-dynamo.py"
+#   output_path = "lambda_payload.zip"
+# }
 
 resource "aws_lambda_function" "kinesis_to_dynamo" {
-  filename      = "${locals.lambda_ingest_path}/lambda_ingest.zip"
+  filename      = "${local.lambda_ingest_path}/lambda_ingest.zip"
   function_name = "lambda_ingest_kinesis_to_dynamo"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "lambda_handler.lambda_handler"
 
-  source_code_hash = filebase64sha256("${locals.lambda_ingest_path}/lambda_ingest.zip")
+  source_code_hash = filebase64sha256("${local.lambda_ingest_path}/lambda_ingest.zip")
 
   runtime     = "python3.12"
   timeout     = 10

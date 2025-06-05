@@ -1,4 +1,4 @@
-name: (2) Destroy BE Infrastructure
+name: (4) Destroy BE Infrastructure
 
 on:
   workflow_dispatch:
@@ -25,10 +25,11 @@ jobs:
         aws s3 cp s3://${{ vars.AWS_STATIC_BUCKET }}/terraform/backend/terraform.tfstate terraform/backend/terraform.tfstate
     
     - name: destroy-backend-infra
+      working-directory: terraform/backend/
       run: |
         terraform init
         terraform destroy -auto-approve \
-          -var="aws_region=${{ vars.AWS_REGION }}"
+          # -var="aws_region=${{ vars.AWS_REGION }}"
 
     - name: clean-up-static-bucket
       run: |

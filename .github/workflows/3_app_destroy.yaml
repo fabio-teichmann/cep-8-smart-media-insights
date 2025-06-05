@@ -10,6 +10,10 @@ jobs:
     steps:
     - name: checkout 
       uses: actions/checkout@v4
+    
+    - name: prepare-packages
+      run: |
+        bash scripts/lambda_ingest/build_lambda.sh
 
     - name: setup-terraform
       uses: hashicorp/setup-terraform@v3

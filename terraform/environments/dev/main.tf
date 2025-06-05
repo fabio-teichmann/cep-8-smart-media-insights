@@ -1,3 +1,25 @@
+terraform {
+  backend "s3" {
+    bucket         = ""
+    key            = ""
+    region         = ""
+    dynamodb_table = ""
+    encrypt        = ""
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.24.0"
+    }
+  }
+  required_version = ">= 1.3.0"
+}
+
+
 module "vpc" {
   source = "../../modules/aws_vpc"
 
@@ -12,11 +34,12 @@ module "bastion_host" {
   vpc_id  = module.vpc.vpc_id
 
   bastion_ami_id = var.bastion_ami_id
+  vpc_public_subnets = module.vpc.vpc_public_subnets
 
   env       = var.env
   plat_name = var.plat_name
 
-  depends_on = [module.vpc]
+#   depends_on = [module.vpc]
 }
 
 module "eks" {
@@ -37,17 +60,40 @@ module "eks" {
 
   user_ip = var.user_ip
 
-  depends_on = [module.vpc, module.bastion_host]
+#   depends_on = [module.vpc, module.bastion_host]
 }
 
-module "alb" {
-  source = "../../modules/aws_alb"
+# module "alb" {
+#   source = "../../modules/aws_alb"
+
+#   plat_name = var.plat_name
+#   env       = var.env
+
+#   openid_connect_eks_arn = module.eks.openid_connect_eks_arn
+#   openid_connect_eks_url = module.eks.openid_connect_eks_url
+
+#   depends_on = [module.eks]
+# }
+
+module "ingestion" {
+  source = "../../modules/ingestion"
 
   plat_name = var.plat_name
   env       = var.env
 
-  openid_connect_eks_arn = module.eks.openid_connect_eks_arn
-  openid_connect_eks_url = module.eks.openid_connect_eks_url
+  vpc_private_subnets = module.vpc.vpc_private_subnets
+  lambda_sg_id        = module.vpc.lambda_sg_id
 
-  depends_on = [module.eks]
+  depends_on = [module.vpc]
+}
+
+module "vpc_endpoints" {
+    source = "../../modules/vpc_endpoints"
+
+    vpc_id = module.vpc.vpc_id
+    vpc_private_subnets = module.vpc.vpc_private_subnets
+    vpc_endpoint_sg_id = module.vpc.vpc_endpoint_sg_id
+    vpc_private_route_table_ids = module.vpc.vpc_private_route_table_ids
+
+    depends_on = [ module.ingestion ]
 }
