@@ -143,6 +143,23 @@ jobs:
           --region ${{ vars.AWS_REGION }} \
           --name ${{ steps.extract.outputs.cluster_name }}
 
+    - name: ensure-ssm-readiness
+      run: |
+        for i in {1..30}; do
+          status=$(aws ssm describe-instance-information \
+            --filters "Key=InstanceIds,Values=${{ steps.extract.outputs.bastion_id }}" \
+            --query "InstanceInformationList[0].PingStatus" \
+            --region ${{ AWS_REGION }} \
+            --output text)
+          if [[ "$status" == "Online" ]]; then
+            echo "SSM agent is online."
+            break
+          else
+            echo "Waiting for SSM agent..."
+            sleep 10
+          fi
+        done
+
     - name: install-remote-bastion
       run: |  
         # Capture command id
