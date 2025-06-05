@@ -199,6 +199,7 @@ jobs:
     #       --set region=${{ vars.AWS_REGION }} \
     #       --set vpcId=${{ steps.extract.outputs.vpc_id }}
     - name: deploy-helm-chart-bastion
+      shell: bash
       run: |
         COMMAND_ID=$(aws ssm send-command \
           --document-name "AWS-RunShellScript" \
@@ -217,13 +218,15 @@ jobs:
           --output text)
         
         set +e
-
         echo "Command submitted to bastion host. Waiting for completion..."
+
         aws ssm wait command-executed \
           --command-id "$COMMAND_ID" \
           --instance-id ${{ steps.extract.outputs.bastion_id }} \
           --region ${{ vars.AWS_REGION }}
         WAIT_STATUS=$?
+
+        set -e
 
         # Wait until command is executed
         if [ "$WAIT_STATUS" -eq 0]; then
@@ -247,7 +250,7 @@ jobs:
             --query "StandardErrorContent"
         fi
 
-        set -e
+        exit 0
 
         # # Get output / error(s)
         # echo "Fetching command output from bastion..."
