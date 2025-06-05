@@ -163,7 +163,7 @@ jobs:
           --query "Command.CommandId" \
           --output text)
 
-        echo "Command submitted to bastion host. Waiting for completion..."
+        echo "Command (ID="$COMMAND_ID") submitted to bastion host. Waiting for completion..."
 
         # Wait until command is executed
         aws ssm wait command-executed \
