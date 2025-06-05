@@ -149,7 +149,7 @@ jobs:
           status=$(aws ssm describe-instance-information \
             --filters "Key=InstanceIds,Values=${{ steps.extract.outputs.bastion_id }}" \
             --query "InstanceInformationList[0].PingStatus" \
-            --region ${{ AWS_REGION }} \
+            --region ${{ vars.AWS_REGION }} \
             --output text)
           if [[ "$status" == "Online" ]]; then
             echo "SSM agent is online."
