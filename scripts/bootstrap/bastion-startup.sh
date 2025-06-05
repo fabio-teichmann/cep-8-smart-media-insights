@@ -10,11 +10,11 @@ systemctl start amazon-ssm-agent
 
 # installations for GitHub Actions
 # Helm
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
+sudo curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+sudo chmod 700 get_helm.sh
 ./get_helm.sh
 
 # kubectl
-curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" 
-chmod +x kubectl 
+sudo curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" 
+sudo chmod +x kubectl 
 mv kubectl /usr/local/bin/
