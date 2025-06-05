@@ -75,7 +75,7 @@ resource "aws_instance" "bastion_host" {
   }
 
   # for later when EKS API endpoint is moved to private only
-  user_data = file("${path.module}/scripts/bootstrap/bastion-startup.sh")
+  user_data = file("${path.root}/scripts/bootstrap/bastion-startup.sh")
 
 }
 
