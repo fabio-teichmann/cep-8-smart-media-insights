@@ -201,6 +201,8 @@ jobs:
     - name: deploy-helm-chart-bastion
       shell: bash
       run: |
+        set +e
+
         COMMAND_ID=$(aws ssm send-command \
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
@@ -217,7 +219,6 @@ jobs:
           --query "Command.CommandId" \
           --output text)
         
-        set +e
         echo "Command submitted to bastion host. Waiting for completion..."
 
         aws ssm wait command-executed \
@@ -226,7 +227,7 @@ jobs:
           --region ${{ vars.AWS_REGION }}
         WAIT_STATUS=$?
 
-        set -e
+        # set -e
 
         # Wait until command is executed
         if [ "$WAIT_STATUS" -eq 0]; then
