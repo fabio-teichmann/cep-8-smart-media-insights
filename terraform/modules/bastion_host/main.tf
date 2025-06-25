@@ -63,10 +63,14 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
   }
 }
 
-resource "aws_iam_role_policy" "bastion_eks_policy" {
-  name   = "bastion-eks-policy"
-  role   = aws_iam_role.bastion_ssm_role.name
+resource "aws_iam_policy" "eks_describe_cluster" {
+  name = "BastionEksPolicies"
   policy = data.aws_iam_policy_document.bastion_eks_policies.json
+}
+
+resource "aws_iam_role_policy_attachment" "bastion_eks_policies" {
+  role = aws_iam_role.bastion_ssm_role.name
+  policy_arn = aws_iam_policy.eks_describe_cluster.arn
 }
 
 resource "aws_iam_instance_profile" "bastion_ssm_profile" {
