@@ -1,4 +1,10 @@
 #!/bin/bash
+# check successful parameter injection
+if [[ -z "${AWS_REGION}" || -z "${CLUSTER_NAME}" ]]; then
+  echo "[ERROR] AWS_REGION or CLUSTER_NAME is empty."
+  exit 1
+fi
+
 yum update -y
 yum install -y curl unzip amazon-ssm-agent --skip-broken --allowerasing
 
@@ -19,9 +25,10 @@ sudo curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/st
 sudo chmod +x kubectl 
 sudo mv kubectl /usr/local/bin/
 
-echo "region: $AWS_REGION"
-echo "cluster-name: $CLUSTER_NAME"
+echo "region: ${AWS_REGION}"
+echo "cluster-name: ${CLUSTER_NAME}"
 
+echo "Setting up kubeconfig..."
 aws eks update-kubeconfig \
-    --region "$AWS_REGION" \
-    --name "$CLUSTER_NAME"
+    --region "${AWS_REGION}" \
+    --name "${CLUSTER_NAME}"
