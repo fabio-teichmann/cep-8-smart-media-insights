@@ -1,6 +1,6 @@
 #!/bin/bash
 yum update -y
-yum install -y curl unzip amazon-ssm-agent
+yum install -y curl unzip amazon-ssm-agent --skip-broken
 
 systemctl enable amazon-ssm-agent
 systemctl start amazon-ssm-agent
@@ -21,4 +21,4 @@ sudo mv kubectl /usr/local/bin/
 
 aws eks update-kubeconfig \
     --region "$AWS_REGION" \
-    --cluster "$CLUSTER_NAME"
+    --name "$CLUSTER_NAME"
