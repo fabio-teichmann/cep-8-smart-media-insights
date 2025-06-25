@@ -18,6 +18,10 @@ output "eks_svc_acc_name" {
   value = module.eks.eks_svc_acc_name
 }
 
+output "eks_cluster_arn" {
+  value = module.eks.cluster_arn
+}
+
 # Ingestion Pipeline
 output "s3_media_bucket" {
   value = module.ingestion.s3_media_bucket
