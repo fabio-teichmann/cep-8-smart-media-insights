@@ -51,21 +51,30 @@ resource "aws_iam_role_policy_attachment" "bastion_ssm_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+# EKS specific IAM requirements to use bastion for app deployment
+data "aws_iam_policy_document" "bastion_eks_policies" {
+  statement {
+      effect = "Allow"
+      actions = [
+          "eks:DescribeCluster",
+          "sts:GetCallerIdentity"
+      ]
+      resources = [var.eks_cluster_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "bastion_eks_policy" {
+  name   = "bastion-eks-policy"
+  role   = aws_iam_role.bastion_ssm_role.name
+  policy = data.aws_iam_policy_document.bastion_eks_policies.json
+}
+
 resource "aws_iam_instance_profile" "bastion_ssm_profile" {
   name = "${var.plat_name}-bastion-ssm-profile"
   role = aws_iam_role.bastion_ssm_role.name
 }
 
-# ENV VARS for start up script
-# data "template_file" "user_data" {
-#   template = file("${path.module}//../../../scripts/bootstrap/bastion-startup.sh")
-
-#   vars = {
-#     CLUSTER_NAME = var.eks_cluster_name
-#     AWS_REGION       = var.region
-#   }
-# }
-
+# inject static(!) parameters into user_data script
 locals {
   user_data_rendered = templatefile("${path.module}/../../../scripts/bootstrap/bastion-startup.sh", {
     CLUSTER_NAME = var.eks_cluster_name,

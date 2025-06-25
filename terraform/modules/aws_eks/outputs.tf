@@ -16,6 +16,10 @@ output "cluster_name" {
   value = module.eks.cluster_name
 }
 
+output "cluster_arn" {
+  value = module.eks.cluster_arn
+}
+
 output "irsa_role_arn" {
   value = aws_iam_role.irsa_role.arn
 }
