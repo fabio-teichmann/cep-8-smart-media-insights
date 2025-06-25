@@ -68,7 +68,7 @@ resource "aws_iam_instance_profile" "bastion_ssm_profile" {
 
 locals {
   user_data_rendered = templatefile("${path.module}/../../../scripts/bootstrap/bastion-startup.sh", {
-    CLUSTER_NAME = var.eks_cluster_name
+    CLUSTER_NAME = var.eks_cluster_name,
     AWS_REGION       = var.region
   })
 }
@@ -93,6 +93,7 @@ resource "aws_instance" "bastion_host" {
 
   # for later when EKS API endpoint is moved to private only
   user_data = local.user_data_rendered
+  user_data_replace_on_change = true
 #   user_data = file("${path.module}/../../../scripts/bootstrap/bastion-startup.sh")
 
 }
