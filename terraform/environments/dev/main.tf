@@ -77,6 +77,14 @@ module "eks" {
 #   depends_on = [module.eks]
 # }
 
+module "bastion_eks_config" {
+  source = "../../modules/bastion_eks_config"
+
+  eks_cluster_name = module.eks.cluster_name
+  bastion_role_arn = module.bastion_host.bastion_role_arn
+  bastion_role_name = module.bastion_host.bastion_role_name
+}
+
 module "ingestion" {
   source = "../../modules/ingestion"
 
