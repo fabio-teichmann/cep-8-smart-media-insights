@@ -19,8 +19,8 @@ sudo curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/st
 sudo chmod +x kubectl 
 sudo mv kubectl /usr/local/bin/
 
-echo "$AWS_REGION"
-echo "$CLUSTER_NAME"
+echo "region: $AWS_REGION"
+echo "cluster-name: $CLUSTER_NAME"
 
 aws eks update-kubeconfig \
     --region "$AWS_REGION" \
