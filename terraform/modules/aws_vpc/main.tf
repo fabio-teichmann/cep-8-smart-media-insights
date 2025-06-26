@@ -42,6 +42,16 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https" {
   cidr_ipv4         = each.value
 }
 
+resource "aws_vpc_security_group_ingress_rule" "allow_https" {
+  for_each = toset(module.vpc.public_subnets_cidr_blocks)
+
+  security_group_id = aws_security_group.vpc_enpoint_sg.id
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_ipv4         = each.value
+}
+
 resource "aws_vpc_security_group_egress_rule" "all_out" {
   security_group_id = aws_security_group.vpc_enpoint_sg.id
   ip_protocol       = "-1"
