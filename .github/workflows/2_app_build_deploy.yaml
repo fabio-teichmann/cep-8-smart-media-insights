@@ -173,8 +173,7 @@ jobs:
           --document-name "AWS-RunShellScrip" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
           --comment "patch aws-auth in eks" \
-          --parameters commands=[ \
-            "aws eks update-kubeconfig \
+          --parameters commands=["aws eks update-kubeconfig \
               --region ${{ vars.AWS_REGION }} \
               --name ${{ steps.extract.outputs.cluster_name }}", \
             "eksctl create identitymapping \
