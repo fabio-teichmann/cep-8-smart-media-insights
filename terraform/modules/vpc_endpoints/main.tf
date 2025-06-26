@@ -3,14 +3,12 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_id          = var.vpc_id
   service_name    = "com.amazonaws.${var.region}.s3"
   route_table_ids = var.vpc_private_route_table_ids
-#   route_table_ids = module.vpc.private_route_table_ids
 }
 
 resource "aws_vpc_endpoint" "dynamo_db" {
   vpc_id          = var.vpc_id
   service_name    = "com.amazonaws.${var.region}.dynamodb"
   route_table_ids = var.vpc_private_route_table_ids
-#   route_table_ids = module.vpc.private_route_table_ids
 }
 
 resource "aws_vpc_endpoint" "kinesis_stream" {
@@ -22,5 +20,15 @@ resource "aws_vpc_endpoint" "kinesis_stream" {
 
   subnet_ids         = var.vpc_private_subnets 
   security_group_ids = [var.vpc_endpoint_sg_id]
-#   security_group_ids = [aws_security_group.vpc_enpoint_sg.id]
+}
+
+resource "aws_vpc_endpoint" "eks" {
+  vpc_id = var.vpc_id
+  service_name = "com.amazonaws.${var.region}.eks"
+  route_table_ids = var.vpc_private_route_table_ids
+
+  private_dns_enabled = true
+
+  subnet_ids         = var.vpc_private_subnets 
+  security_group_ids = [var.vpc_endpoint_sg_id]
 }

@@ -25,10 +25,23 @@ sudo curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/st
 sudo chmod +x kubectl 
 sudo mv kubectl /usr/local/bin/
 
-echo "region: ${AWS_REGION}"
-echo "cluster-name: ${CLUSTER_NAME}"
+# eksctl
+# for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
+ARCH=amd64
+PLATFORM=$(uname -s)_$ARCH
 
-echo "Setting up kubeconfig..."
-aws eks update-kubeconfig \
-    --region "${AWS_REGION}" \
-    --name "${CLUSTER_NAME}"
+sudo curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+
+# (Optional) Verify checksum
+sudo curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
+sudo tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && sudo rm eksctl_$PLATFORM.tar.gz
+sudo mv /tmp/eksctl /usr/local/bin
+
+# setting up kubeconfig
+# echo "region: ${AWS_REGION}"
+# echo "cluster-name: ${CLUSTER_NAME}"
+
+# echo "Setting up kubeconfig..."
+# aws eks update-kubeconfig \
+#     --region "${AWS_REGION}" \
+#     --name "${CLUSTER_NAME}"

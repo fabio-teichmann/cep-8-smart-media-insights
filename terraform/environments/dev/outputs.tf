@@ -6,6 +6,14 @@ output "bastion_id" {
     value = module.bastion_host.bastion_id
 }
 
+output "bastion_role_arn" {
+  value = module.bastion_host.bastion_role_arn
+}
+
+output "bastion_username" {
+  value = module.bastion_host.bastion_role_name
+}
+
 output "cluster_name" {
   value = module.eks.cluster_name
 }

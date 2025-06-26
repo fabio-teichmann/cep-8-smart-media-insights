@@ -123,15 +123,15 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 data "aws_iam_policy_document" "lambda_iam_policies" {
-    statement {
-        effect = "Allow"
-        actions = [
-            "ec2:CreateNetworkInterface",
-            "ec2:DescribeNetworkInterfaces",
-            "ec2:DeleteNetworkInterface"
-        ]
-        resources = ["*"]
-    }
+  statement {
+      effect = "Allow"
+      actions = [
+          "ec2:CreateNetworkInterface",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteNetworkInterface"
+      ]
+      resources = ["*"]
+  }
 
   statement {
     effect = "Allow"
