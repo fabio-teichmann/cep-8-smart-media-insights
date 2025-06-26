@@ -57,6 +57,8 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       effect = "Allow"
       actions = [
           "eks:DescribeCluster",
+          "eks:UpdateKubeconfig",
+          "eks:ListClusters",
           "sts:GetCallerIdentity"
       ]
       resources = [var.eks_cluster_arn]
