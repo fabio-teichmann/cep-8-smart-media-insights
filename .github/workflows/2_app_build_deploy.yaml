@@ -177,7 +177,9 @@ jobs:
           --instance-ids "${{ steps.extract.outputs.bastion_id }}" \
           --comment "patch aws-auth in eks" \
           --parameters '{"commands":["aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name ${{ steps.extract.outputs.cluster_name }}","eksctl create iamidentitymapping --cluster ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }} --arn ${{ steps.extract.outputs.bastion_role_arn }} --group system:masters --username ${{ steps.extract.outputs.bastion_username }}"]}' \
-          --region "${{ vars.AWS_REGION }}")
+          --region "${{ vars.AWS_REGION }}" \
+          --output text \
+          --query "StandardErrorContent")
 
         echo "Command (ID="$COMMAND_ID") submitted to bastion host. Waiting for completion..."
 
