@@ -170,19 +170,11 @@ jobs:
       shell: bash
       run: |
         aws ssm send-command \
-          --document-name "AWS-RunShellScrip" \
-          --instance-ids ${{ steps.extract.outputs.bastion_id }} \
+          --document-name "AWS-RunShellScript" \
+          --instance-ids "${{ steps.extract.outputs.bastion_id }}" \
           --comment "patch aws-auth in eks" \
-          --parameters commands=["aws eks update-kubeconfig \
-              --region ${{ vars.AWS_REGION }} \
-              --name ${{ steps.extract.outputs.cluster_name }}", \
-            "eksctl create identitymapping \
-              --cluster ${{ steps.extract.outputs.cluster_name }} \
-              --region ${{ vars.AWS_REGION }} \
-              --arn ${{ steps.extract.outputs.bastion_role_arn }}\
-              --group system:masters \
-              --username ${{ steps.extract.outputs.bastion_username }}"] \
-          --region ${{ vars.AWS_REGION }}
+          --parameters '{"commands":["aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name ${{ steps.extract.outputs.cluster_name }}","eksctl create iamidentitymapping --cluster ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }} --arn ${{ steps.extract.outputs.bastion_role_arn }} --group system:masters --username ${{ steps.extract.outputs.bastion_username }}"]}' \
+          --region "${{ vars.AWS_REGION }}"
 
     - name: install-remote-bastion
       shell: bash
