@@ -25,7 +25,7 @@ resource "aws_vpc_endpoint" "kinesis_stream" {
 resource "aws_vpc_endpoint" "eks" {
   vpc_id = var.vpc_id
   service_name = "com.amazonaws.${var.region}.eks"
-  route_table_ids = var.vpc_private_route_table_ids
+  vpc_endpoint_type = "Interface"
 
   private_dns_enabled = true
 
