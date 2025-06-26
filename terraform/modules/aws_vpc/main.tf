@@ -42,7 +42,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https" {
   cidr_ipv4         = each.value
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_https" {
+resource "aws_vpc_security_group_ingress_rule" "allow_https_public" {
   for_each = toset(module.vpc.public_subnets_cidr_blocks)
 
   security_group_id = aws_security_group.vpc_enpoint_sg.id
