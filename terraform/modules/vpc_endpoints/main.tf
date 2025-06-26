@@ -29,6 +29,6 @@ resource "aws_vpc_endpoint" "eks" {
 
   private_dns_enabled = true
 
-  subnet_ids         = var.vpc_private_subnets 
+  subnet_ids         = var.vpc_public_subnets 
   security_group_ids = [var.vpc_endpoint_sg_id]
 }

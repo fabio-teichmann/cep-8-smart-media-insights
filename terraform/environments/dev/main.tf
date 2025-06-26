@@ -102,6 +102,7 @@ module "vpc_endpoints" {
 
     vpc_id = module.vpc.vpc_id
     vpc_private_subnets = module.vpc.vpc_private_subnets
+    vpc_public_subnets = module.vpc.vpc_public_subnets
     vpc_endpoint_sg_id = module.vpc.vpc_endpoint_sg_id
     vpc_private_route_table_ids = module.vpc.vpc_private_route_table_ids
 
