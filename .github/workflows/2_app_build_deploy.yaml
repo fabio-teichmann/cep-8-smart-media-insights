@@ -137,8 +137,8 @@ jobs:
         bastion_id=$(jq -r '.bastion_id.value' tf-outputs.json)
         echo "bastion_id=$bastion_id" >> "$GITHUB_OUTPUT"
 
-        bastion_role_name=$(jq -r '.bastion_role_name.value' tf-outputs.json)
-        echo "bastion_role_name=$bastion_role_name" >> "$GITHUB_OUTPUT"
+        bastion_role_arn=$(jq -r '.bastion_role_arn.value' tf-outputs.json)
+        echo "bastion_role_arn=$bastion_role_name" >> "$GITHUB_OUTPUT"
 
         bastion_username=$(jq -r '.bastion_username.value' tf-outputs.json)
         echo "bastion_username=$bastion_username" >> "$GITHUB_OUTPUT"
@@ -180,7 +180,7 @@ jobs:
             "eksctl create identitymapping \
               --cluster ${{ steps.extract.outputs.cluster_name }} \
               --region ${{ vars.AWS_REGION }} \
-              --arn ${{ steps.extract.outputs.bastion_role_name }}\
+              --arn ${{ steps.extract.outputs.bastion_role_arn }}\
               --group system:masters \
               --username ${{ steps.extract.outputs.bastion_username }}"] \
           --region ${{ vars.AWS_REGION }}
