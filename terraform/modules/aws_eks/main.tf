@@ -92,7 +92,7 @@ module "eks" {
       max_size     = 3
       desired_size = 2
 
-      instance_types = ["t5.medium"]
+      instance_types = ["t3.medium"]
       capacity_type  = "SPOT"
 
       update_launch_template_default_version = false
