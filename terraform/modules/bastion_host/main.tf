@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_security_group" "bastion_sg" {
   vpc_id = var.vpc_id
 }
@@ -42,13 +44,6 @@ resource "aws_iam_role" "bastion_ssm_role" {
       Principal = {
         Service = "ec2.amazonaws.com"
       }
-    },
-    {
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        AWS: "arn:aws:iam::478897220732:role/smart-media-bastion-ssm-role"
-      }
     }]
   })
 }
@@ -74,7 +69,8 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
     actions = [
       "eks:DescribeClusterVersions",
       "sts:GetCallerIdentity",
-      "sts:AssumeRole"
+      "sts:AssumeRole",
+      "iam:CreatePolicy"
     ]
     resources = ["*"] # Required because this API doesn't use a cluster ARN
   }
@@ -99,7 +95,8 @@ resource "aws_iam_instance_profile" "bastion_ssm_profile" {
 locals {
   user_data_rendered = templatefile("${path.module}/../../../scripts/bootstrap/bastion-startup.sh", {
     CLUSTER_NAME = var.eks_cluster_name,
-    AWS_REGION       = var.region
+    AWS_REGION       = var.region,
+    AWS_STATIC_BUCKET = var.s3_static_bucket
   })
 }
 
@@ -128,3 +125,22 @@ resource "aws_instance" "bastion_host" {
 
 }
 
+locals {
+  eks_alb_controller_rendered = templatefile("${path.module}/../../../scripts/bootstrap/eks-alb-controller.sh", {
+    CLUSTER_NAME = var.eks_cluster_name,
+    AWS_REGION = var.region,
+    AWS_ACCOUNT_ID = data.aws_caller_identity.current.account_id
+  })
+}
+
+resource "aws_s3_object" "rendered_script" {
+  bucket = var.s3_static_bucket
+  key    = "scripts/bootstrap/eks-alb-controller.sh"
+  content = local.eks_alb_controller_rendered
+  content_type = "text/x-shellscript"
+
+  tags = {
+    Name        = "ALB Controller script"
+    Environment = var.env
+  }
+}

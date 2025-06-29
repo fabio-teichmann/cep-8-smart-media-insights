@@ -34,6 +34,11 @@ variable "bastion_ami_id" {
   type    = string
   default = "ami-0953476d60561c955"
 }
+
+variable "s3_static_bucket" {
+  type = string
+}
+
 # variable "app_alb_port" {
 #     type = number
 

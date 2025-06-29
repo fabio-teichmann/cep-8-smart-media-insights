@@ -44,6 +44,10 @@ variable "eks_cluster_arn" {
   type = string
 }
 
+variable "s3_static_bucket" {
+  type = string
+}
+
 # temporary #################
 variable "user_ip" {
   type = string

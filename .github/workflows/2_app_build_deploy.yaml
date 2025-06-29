@@ -92,7 +92,8 @@ jobs:
           -var="plat_name=smart-media" \
           -var="env=dev" \
           -var="eks_svc_acc_name=smart-media-cluster-svc-acc" \
-          -var="user_ip=${{ vars.USER_IP_ADDRESS }}"
+          -var="user_ip=${{ vars.USER_IP_ADDRESS }}" \
+          -var="s3_static_bucket=${{ vars.AWS_STATIC_BUCKET }}"
         terraform output -json > tf-outputs.json
 
     - name: upload-artifact

@@ -37,6 +37,9 @@ sudo curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksc
 sudo tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && sudo rm eksctl_$PLATFORM.tar.gz
 sudo mv /tmp/eksctl /usr/local/bin
 
+sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/eks-alb-controller.sh /usr/local/src/bootsrap/eks-alb-controller.sh
+sudo chmod +x /usr/local/src/bootstrap/eks-alb-controller.sh
+
 # setting up kubeconfig
 # echo "region: ${AWS_REGION}"
 # echo "cluster-name: ${CLUSTER_NAME}"

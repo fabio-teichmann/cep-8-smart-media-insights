@@ -41,6 +41,8 @@ module "bastion_host" {
   eks_cluster_name = module.eks.cluster_name
   eks_cluster_arn = module.eks.cluster_arn
 
+  s3_static_bucket = var.s3_static_bucket
+
 #   depends_on = [module.vpc]
 }
 
