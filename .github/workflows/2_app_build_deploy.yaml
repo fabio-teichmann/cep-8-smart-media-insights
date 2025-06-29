@@ -166,53 +166,53 @@ jobs:
             sleep 10
           fi
         done
+    # NOTE: Currently needs to be done manually - looking for a fix later; this has been blocking for too long now
+    # - name: patch-aws-auth-in-eks
+    #   shell: bash
+    #   run: |
+    #     set +e
 
-    - name: patch-aws-auth-in-eks
-      shell: bash
-      run: |
-        set +e
+    #     # Capture command id
+    #     COMMAND_ID=$(aws ssm send-command \
+    #       --document-name "AWS-RunShellScript" \
+    #       --instance-ids "${{ steps.extract.outputs.bastion_id }}" \
+    #       --comment "patch aws-auth in eks" \
+    #       --parameters '{"commands":["aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name ${{ steps.extract.outputs.cluster_name }}","eksctl create iamidentitymapping --cluster ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }} --arn ${{ steps.extract.outputs.bastion_role_arn }} --group system:masters --username ${{ steps.extract.outputs.bastion_username }}"]}' \
+    #       --region "${{ vars.AWS_REGION }}" \
+    #       --output text \
+    #       --query "Command.CommandId")
 
-        # Capture command id
-        COMMAND_ID=$(aws ssm send-command \
-          --document-name "AWS-RunShellScript" \
-          --instance-ids "${{ steps.extract.outputs.bastion_id }}" \
-          --comment "patch aws-auth in eks" \
-          --parameters '{"commands":["aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name ${{ steps.extract.outputs.cluster_name }}","eksctl create iamidentitymapping --cluster ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }} --arn ${{ steps.extract.outputs.bastion_role_arn }} --group system:masters --username ${{ steps.extract.outputs.bastion_username }}"]}' \
-          --region "${{ vars.AWS_REGION }}" \
-          --output text \
-          --query "Command.CommandId")
+    #     echo "Command (ID="$COMMAND_ID") submitted to bastion host. Waiting for completion..."
 
-        echo "Command (ID="$COMMAND_ID") submitted to bastion host. Waiting for completion..."
+    #     aws ssm wait command-executed \
+    #       --command-id "$COMMAND_ID" \
+    #       --instance-id ${{ steps.extract.outputs.bastion_id }} \
+    #       --region ${{ vars.AWS_REGION }}
+    #     WAIT_STATUS=$?
 
-        aws ssm wait command-executed \
-          --command-id "$COMMAND_ID" \
-          --instance-id ${{ steps.extract.outputs.bastion_id }} \
-          --region ${{ vars.AWS_REGION }}
-        WAIT_STATUS=$?
+    #     # Wait until command is executed
+    #     if [ "$WAIT_STATUS" -eq 0]; then
+    #       # Get output 
+    #       echo "✅ Command succeeded. Fetching command output from bastion..."
+    #       aws ssm get-command-invocation \
+    #         --command-id "$COMMAND_ID" \
+    #         --instance-id ${{ steps.extract.outputs.bastion_id }} \
+    #         --region ${{ vars.AWS_REGION }} \
+    #         --output text \
+    #         --query "StandardOutputContent"
 
-        # Wait until command is executed
-        if [ "$WAIT_STATUS" -eq 0]; then
-          # Get output 
-          echo "✅ Command succeeded. Fetching command output from bastion..."
-          aws ssm get-command-invocation \
-            --command-id "$COMMAND_ID" \
-            --instance-id ${{ steps.extract.outputs.bastion_id }} \
-            --region ${{ vars.AWS_REGION }} \
-            --output text \
-            --query "StandardOutputContent"
+    #     else
+    #       # Get error(s)
+    #       echo "❌ Command failed. Fetching error output (if any) from bastion..."
+    #       aws ssm get-command-invocation \
+    #         --command-id "$COMMAND_ID" \
+    #         --instance-id ${{ steps.extract.outputs.bastion_id }} \
+    #         --region ${{ vars.AWS_REGION }} \
+    #         --output text \
+    #         --query "StandardErrorContent"
+    #     fi
 
-        else
-          # Get error(s)
-          echo "❌ Command failed. Fetching error output (if any) from bastion..."
-          aws ssm get-command-invocation \
-            --command-id "$COMMAND_ID" \
-            --instance-id ${{ steps.extract.outputs.bastion_id }} \
-            --region ${{ vars.AWS_REGION }} \
-            --output text \
-            --query "StandardErrorContent"
-        fi
-
-    - name: install-remote-bastion
+    - name: install-alb-controller-through-bastion
       shell: bash
       continue-on-error: true
       run: |  
@@ -223,15 +223,7 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
           --comment "install ALB Controller into helm" \
-          --parameters commands=["helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \
-            --namespace kube-system \
-            --set clusterName=${{ steps.extract.outputs.cluster_name }} \
-            --set serviceAccount.create=true \
-            --set serviceAccount.name=aws-load-balancer-controller \
-            --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${{ steps.extract.outputs.aws_account_id }}:role/alb-controller-role" \
-            --set region=${{ vars.AWS_REGION }} \
-            --set vpcId=${{ steps.extract.outputs.vpc_id }} \
-            "] \
+          --parameters commands=["../local/src/bootstrap/eks-alb-controller.sh"] \
           --region ${{ vars.AWS_REGION }} \
           --query "Command.CommandId" \
           --output text)
@@ -288,7 +280,7 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
           --comment "deploy helm chart on EKS" \
-          --parameters commands=["helm upgrade -i smart-media ./helm-charts/smart-media \
+          --parameters commands=["aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}", "helm upgrade -i smart-media ./helm-charts/smart-media \
             --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media \
             --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
             --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} \
@@ -332,24 +324,7 @@ jobs:
             --query "StandardErrorContent"
         fi
 
-        # exit 0
-
-        # # Get output / error(s)
-        # echo "Fetching command output from bastion..."
-        # aws ssm get-command-invocation \
-        #   --command-id "$COMMAND_ID" \
-        #   --instance-id ${{ steps.extract.outputs.bastion_id }} \
-        #   --region ${{ vars.AWS_REGION }} \
-        #   --output text \
-        #   --query "StandardOutputContent"
-
-        # echo "Fetching error output (if any) from bastion..."
-        # aws ssm get-command-invocation \
-        #   --command-id "$COMMAND_ID" \
-        #   --instance-id ${{ steps.extract.outputs.bastion_id }} \
-        #   --region ${{ vars.AWS_REGION }} \
-        #   --output text \
-        #   --query "StandardErrorContent"
+        
 
     # - name: deploy-helm-chart
     #   run: |
