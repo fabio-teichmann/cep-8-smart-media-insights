@@ -66,7 +66,8 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
     effect = "Allow"
     actions = [
       "eks:DescribeClusterVersions",
-      "sts:GetCallerIdentity"
+      "sts:GetCallerIdentity",
+      "sts:AssumeRole"
     ]
     resources = ["*"] # Required because this API doesn't use a cluster ARN
   }
