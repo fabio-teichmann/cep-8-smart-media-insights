@@ -58,15 +58,15 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       actions = [
           "eks:DescribeCluster",
           "eks:UpdateKubeconfig",
-          "eks:ListClusters",
-          "sts:GetCallerIdentity"
+          "eks:ListClusters"
       ]
       resources = [var.eks_cluster_arn]
   }
   statement {
     effect = "Allow"
     actions = [
-      "eks:DescribeClusterVersions"
+      "eks:DescribeClusterVersions",
+      "sts:GetCallerIdentity"
     ]
     resources = ["*"] # Required because this API doesn't use a cluster ARN
   }
