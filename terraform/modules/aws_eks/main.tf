@@ -5,7 +5,7 @@ resource "aws_security_group_rule" "bastion_to_nodes" {
   to_port                  = 22
   protocol                 = "tcp"
   source_security_group_id = var.bastion_sg_id
-  security_group_id        = module.eks.node_security_group_id
+  security_group_id        = module.eks.cluster_security_group_id
 }
 
 resource "aws_security_group_rule" "bastion_to_nodes_https" {
@@ -14,7 +14,7 @@ resource "aws_security_group_rule" "bastion_to_nodes_https" {
   to_port                  = 443
   protocol                 = "tcp"
   source_security_group_id = var.bastion_sg_id
-  security_group_id        = module.eks.node_security_group_id
+  security_group_id        = module.eks.cluster_security_group_id
 }
 
 # IRSA for EKS ##############
@@ -92,7 +92,7 @@ module "eks" {
       max_size     = 3
       desired_size = 2
 
-      instance_types = ["t5.large"]
+      instance_types = ["t5.medium"]
       capacity_type  = "SPOT"
 
       update_launch_template_default_version = false
