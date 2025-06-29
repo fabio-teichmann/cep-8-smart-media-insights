@@ -77,13 +77,7 @@ module "eks" {
 #   depends_on = [module.eks]
 # }
 
-# module "bastion_eks_config" {
-#   source = "../../modules/bastion_eks_config"
 
-#   eks_cluster_name = module.eks.cluster_name
-#   bastion_role_arn = module.bastion_host.bastion_role_arn
-#   bastion_role_name = module.bastion_host.bastion_role_name
-# }
 
 module "ingestion" {
   source = "../../modules/ingestion"
@@ -108,3 +102,46 @@ module "vpc_endpoints" {
 
     depends_on = [ module.ingestion ]
 }
+
+module "bastion_eks_config" {
+  source = "../../modules/bastion_eks_config"
+
+  eks_cluster_name = module.eks.cluster_name
+  bastion_role_arn = module.bastion_host.bastion_role_arn
+  bastion_role_name = module.bastion_host.bastion_role_name
+
+  depends_on = [ module.bastion_host, module.eks ]
+}
+
+# # aws-auth signed transactions with EKS
+# data "template_file" "aws_auth_configmap" {
+#   template = file("${path.module}/templates/aws-auth.yaml.tpl")
+
+#   vars = {
+#     role_arn = var.bastion_role_arn #aws_iam_role.bastion_ssm.arn
+#     role_name = var.bastion_role_name #aws_iam_role.bastion_ssm_role.name
+#   }
+# }
+
+# resource "null_resource" "update_aws_auth" {
+#   provisioner "local-exec" {
+#     command = <<EOT
+#       echo '${data.template_file.aws_auth_configmap.rendered}' > aws-auth.yaml
+#       aws eks update-kubeconfig --name ${var.eks_cluster_name} --region ${var.region}
+#       kubectl apply -f aws-auth.yaml
+#     EOT
+#   }
+
+# #   depends_on = [
+# #     aws_iam_role.bastion_ssm_role
+# #   ]
+# }
+
+# resource "terraform_data" "patch_eks_aws_auth" {
+#   provisioner "loval-exec" {
+#     when = apply
+#     command = <<EOT
+#       echo 
+#     EOT
+#   }
+# }
