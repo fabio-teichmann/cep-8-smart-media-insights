@@ -42,6 +42,13 @@ resource "aws_iam_role" "bastion_ssm_role" {
       Principal = {
         Service = "ec2.amazonaws.com"
       }
+    },
+    {
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        AWS: "arn:aws:iam::478897220732:role/smart-media-bastion-ssm-role"
+      }
     }]
   })
 }
