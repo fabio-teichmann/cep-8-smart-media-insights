@@ -103,15 +103,15 @@ module "vpc_endpoints" {
     depends_on = [ module.ingestion ]
 }
 
-module "bastion_eks_config" {
-  source = "../../modules/bastion_eks_config"
+# module "bastion_eks_config" {
+#   source = "../../modules/bastion_eks_config"
 
-  eks_cluster_name = module.eks.cluster_name
-  bastion_role_arn = module.bastion_host.bastion_role_arn
-  bastion_role_name = module.bastion_host.bastion_role_name
+#   eks_cluster_name = module.eks.cluster_name
+#   bastion_role_arn = module.bastion_host.bastion_role_arn
+#   bastion_role_name = module.bastion_host.bastion_role_name
 
-  depends_on = [ module.bastion_host, module.eks ]
-}
+#   depends_on = [ module.bastion_host, module.eks ]
+# }
 
 # # aws-auth signed transactions with EKS
 # data "template_file" "aws_auth_configmap" {
