@@ -70,9 +70,18 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       "eks:DescribeClusterVersions",
       "sts:GetCallerIdentity",
       "sts:AssumeRole",
-      "iam:CreatePolicy"
+      "iam:CreatePolicy",
+      "s3:"
     ]
     resources = ["*"] # Required because this API doesn't use a cluster ARN
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:ListBucket"
+    ]
+    resources = ["arn:aws:s3:::${var.s3_static_bucket}", "arn:aws:s3:::${var.s3_static_bucket}/*"]
   }
 }
 
