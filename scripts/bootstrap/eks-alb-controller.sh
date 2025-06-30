@@ -15,7 +15,9 @@ eksctl create iamserviceaccount \
     --approve
 
 # Add to Helm
+echo "Acquiring kubeconfig..."
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
+sudo aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
 
 helm repo add eks https://aws.github.io/eks-charts
 
