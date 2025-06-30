@@ -1,3 +1,9 @@
+#!/bin/bash
+if [[ -z "${AWS_REGION}" || -z "${CLUSTER_NAME}" ]]; then
+  echo "[ERROR] AWS_REGION or CLUSTER_NAME is empty."
+  exit 1
+fi
+
 # Create required policies for ALB controller
 sudo curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.13.0/docs/install/iam_policy.json
 
