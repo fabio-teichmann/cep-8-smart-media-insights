@@ -260,16 +260,6 @@ jobs:
             --query "StandardErrorContent"
         fi
 
-    # - name: install-remote
-    #   run: |
-    #     helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \
-    #       --namespace kube-system \
-    #       --set clusterName=${{ steps.extract.outputs.cluster_name }} \
-    #       --set serviceAccount.create=true \
-    #       --set serviceAccount.name=aws-load-balancer-controller \
-    #       --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${{ steps.extract.outputs.aws_account_id }}:role/alb-controller-role" \
-    #       --set region=${{ vars.AWS_REGION }} \
-    #       --set vpcId=${{ steps.extract.outputs.vpc_id }}
     - name: deploy-helm-chart-bastion
       shell: bash
       continue-on-error: true
@@ -323,18 +313,3 @@ jobs:
             --output text \
             --query "StandardErrorContent"
         fi
-
-        
-
-    # - name: deploy-helm-chart
-    #   run: |
-    #     helm upgrade -i smart-media ./helm-charts/smart-media \
-    #       --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media \
-    #       # --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
-    #       # --set env.dynamoDbStatusTable=${{ steps.extract.outputs.dynamodb_status_table }} \
-    #       # --set env.s3MediaTable=${{ steps.extract.outputs.s3_media_table }} \
-    #       --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
-    #       --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} \
-    #       --set secrets.logfireApiToken=${{ secrets.LOGFIRE_API_KEY}} \
-    #       --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} \
-    #       --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${{steps.extract.outputs.svc_acc_annot}}

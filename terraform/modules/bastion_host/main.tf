@@ -138,7 +138,8 @@ locals {
   eks_alb_controller_rendered = templatefile("${path.module}/../../../scripts/bootstrap/eks-alb-controller.sh", {
     CLUSTER_NAME = var.eks_cluster_name,
     AWS_REGION = var.region,
-    AWS_ACCOUNT_ID = data.aws_caller_identity.current.account_id
+    AWS_ACCOUNT_ID = data.aws_caller_identity.current.account_id,
+    VPC_ID = var.vpc_id
   })
 }
 
