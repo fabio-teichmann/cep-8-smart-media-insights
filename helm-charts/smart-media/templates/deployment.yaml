@@ -16,6 +16,25 @@ spec:
         - name: smart-media
           image: fabioteichmann/smart-media:latest
           imagePullPolicy: Always
+          env:
+            - name: AWS_REGION
+              value: {{ .Values.region }}
+              
+            - name: DYNAMO_TABLE 
+              value: {{ .Values.env.dynamoTable}} 
+                
+            - name: LOGFIRE_TOKEN 
+              value: {{ .values.secrets.logfireApiToken }}
+
+            - name: LOGFIRE_PROJECT_NAME
+              value: {{ .Values.env.logfireProjectName}}
+                
+            - name: KDS_STREAM_NAME
+              value: {{ .Values.env.kdsStreamName }}
+            
+            - name: S3_MEDIA_BUCKET
+              value: {{ .Values.env.s3MediaBucket }}
+                
           ports:
             - name: http 
               containerPort: 8000
