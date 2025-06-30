@@ -102,7 +102,7 @@ module "eks" {
   # enabled only for development to troubleshoot with `kubectl` from local.
   # will be disabled once bastion is set up
   cluster_endpoint_public_access       = true
-  cluster_endpoint_public_access_cidrs = ["${var.user_ip}/32"] # restrict in production
+  cluster_endpoint_public_access_cidrs = ["${var.user_ip}/32", "10.0.101.0/24", "10.0.102.0/24"] # restrict in production
 
   cluster_endpoint_private_access = true
 
