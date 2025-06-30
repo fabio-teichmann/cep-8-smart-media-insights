@@ -11,34 +11,3 @@ spec:
       targetPort: 8000
       protocol: TCP 
       name: http
-# --- 
-# apiVersion: v1
-# kind: Service 
-# metadata:
-#   name: results-svc
-# spec: 
-#   type: ClusterIP
-#   selector:
-#     app: smart-media
-#   ports:
-#     - port: 8000
-#       targetPort: 8000
-#       protocol: TCP 
-#       name: http 
-
----
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: {{ include "smart-media.fullname" . }}
-#   labels:
-#     {{- include "smart-media.labels" . | nindent 4 }}
-# spec:
-#   type: {{ .Values.service.type }}
-#   ports:
-#     - port: {{ .Values.service.port }}
-#       targetPort: http
-#       protocol: TCP
-#       name: http
-#   selector:
-#     {{- include "smart-media.selectorLabels" . | nindent 4 }}
