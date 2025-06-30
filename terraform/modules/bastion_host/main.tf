@@ -70,6 +70,7 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       "eks:DescribeClusterVersions",
       "sts:GetCallerIdentity",
       "sts:AssumeRole",
+      "iam:CreateRole",
       "iam:CreatePolicy",
       "iam:GetOpenIDConnectProvider",
       "cloudformation:ListStacks",
