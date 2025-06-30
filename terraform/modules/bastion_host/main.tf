@@ -77,6 +77,7 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       "iam:PutRolePolicy",
       "iam:AttachRolePolicy",
       "iam:PassRole",
+      "iam:GetRole",
       "iam:GetOpenIDConnectProvider",
       "cloudformation:ListStacks",
       "cloudformation:CreateStack",
