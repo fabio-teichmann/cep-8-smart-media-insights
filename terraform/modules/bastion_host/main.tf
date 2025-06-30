@@ -73,6 +73,7 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       "iam:CreatePolicy",
       "iam:GetOpenIDConnectProvider",
       "cloudformation:ListStacks",
+      "cloudformation:CreateStack",
     ]
     resources = ["*"] # Required because this API doesn't use a cluster ARN
   }
