@@ -6,17 +6,17 @@ import boto3
 from botocore.exceptions import ClientError
 import logfire
 
-from .helpers import create_app
-from .models import MediaMeta, MediaUploadResponse
+from helpers import create_app
+from models import MediaMeta, MediaUploadResponse
 
 AWS_REGION = os.getenv("AWS_REGION")
 DYNAMO_TABLE = os.getenv("DYNAMO_TABLE_NAME")
 KDS_STREAM_NAME = os.getenv("KDS_STREAM_NAME")
 S3_MEDIA_BUCKET = os.getenv("S3_MEDIA_BUCKET")
 
-dynamo_client = boto3.client("dynamodb", region=AWS_REGION)
-kds_client = boto3.client("kinesis", region=AWS_REGION)
-s3_client = boto3.client("s3", region=AWS_REGION)
+dynamo_client = boto3.client("dynamodb", region_name=AWS_REGION)
+kds_client = boto3.client("kinesis", region_name=AWS_REGION)
+s3_client = boto3.client("s3", region_name=AWS_REGION)
 
 app = create_app()
 
