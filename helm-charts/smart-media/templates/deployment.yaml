@@ -19,12 +19,12 @@ spec:
           env:
             - name: AWS_REGION
               value: {{ .Values.region }}
-              
+
             - name: DYNAMO_TABLE 
               value: {{ .Values.env.dynamoTable}} 
                 
             - name: LOGFIRE_TOKEN 
-              value: {{ .values.secrets.logfireApiToken }}
+              value: {{ .Values.secrets.logfireApiToken }}
 
             - name: LOGFIRE_PROJECT_NAME
               value: {{ .Values.env.logfireProjectName}}

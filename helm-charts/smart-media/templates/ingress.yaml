@@ -5,11 +5,12 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     alb.ingress.kubernetes.io/group.name: "media-insights"
     alb.ingress.kubernetes.io/healthcheck-path: "/health"
     alb.ingress.kubernetes.io/success-codes: 200,202
     alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=60
+    kubernetes.io/ingress.class: alb
 
     # alb.ingress.kubernetes.io/managed: "false"
 spec:
