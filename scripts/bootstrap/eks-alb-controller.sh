@@ -6,8 +6,10 @@ fi
 echo "Acquiring kubeconfig..."
 
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
+echo "kube config at '~/.kube/config'..."
 cat ~/.kube/config
-ls
+echo "Present working directory..."
+pwd
 
 # Create required policies for ALB controller
 echo "Creating service account for ALB Controller..."
