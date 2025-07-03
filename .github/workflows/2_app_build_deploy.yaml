@@ -97,7 +97,7 @@ jobs:
         terraform output -json > tf-outputs.json
 
         echo '### TerraForm Outputs:' >> $GITHUB_STEP_SUMMARY
-        terraform output -raw >> $GITHUB_STEP_SUMMARY
+        terraform output -json >> $GITHUB_STEP_SUMMARY
 
     - name: upload-artifact
       uses: actions/upload-artifact@v4
