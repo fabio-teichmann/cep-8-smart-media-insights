@@ -279,14 +279,12 @@ jobs:
       run: |  
         set +e
 
-        echo "acquiring kube-config..."
-
-        aws ssm send-command \
-          --document-name "AWS-RunShellScript" \
-          --instance-ids ${{ steps.extract.outputs.bastion_id }} \
-          --comment "install ALB Controller into helm" \
-          --parameters commands=["aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}"] \
-          --region ${{ vars.AWS_REGION }}
+        # aws ssm send-command \
+        #   --document-name "AWS-RunShellScript" \
+        #   --instance-ids ${{ steps.extract.outputs.bastion_id }} \
+        #   --comment "install ALB Controller into helm" \
+        #   --parameters commands=["aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}"] \
+        #   --region ${{ vars.AWS_REGION }}
 
         # Capture command id
         COMMAND_ID=$(aws ssm send-command \
