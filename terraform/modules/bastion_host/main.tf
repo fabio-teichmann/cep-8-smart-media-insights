@@ -55,7 +55,7 @@ resource "aws_iam_role_policy_attachment" "bastion_ssm_policy" {
 
 resource "aws_iam_role_policy_attachment" "bastion_eks_admin" {
   role = aws_iam_role.bastion_ssm_role.name
-  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSServiceRolePolicy"
 }
 
 # EKS specific IAM requirements to use bastion for app deployment
