@@ -11,8 +11,6 @@ metadata:
     alb.ingress.kubernetes.io/success-codes: 200,202
     alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=60
     kubernetes.io/ingress.class: alb
-
-    # alb.ingress.kubernetes.io/managed: "false"
 spec:
   rules:
   - http: 
