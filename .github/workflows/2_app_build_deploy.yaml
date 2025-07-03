@@ -96,6 +96,9 @@ jobs:
           -var="s3_static_bucket=${{ vars.AWS_STATIC_BUCKET }}"
         terraform output -json > tf-outputs.json
 
+        echo '### TerraForm Outputs:' >> $GITHUB_STEP_SUMMARY
+        terraform output -raw >> $GITHUB_STEP_SUMMARY
+
     - name: upload-artifact
       uses: actions/upload-artifact@v4
       with:
@@ -278,14 +281,6 @@ jobs:
       continue-on-error: true
       run: |  
         set +e
-        aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}
-
-        # aws ssm send-command \
-        #   --document-name "AWS-RunShellScript" \
-        #   --instance-ids ${{ steps.extract.outputs.bastion_id }} \
-        #   --comment "install ALB Controller into helm" \
-        #   --parameters commands=["aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}"] \
-        #   --region ${{ vars.AWS_REGION }}
 
         # Capture command id
         COMMAND_ID=$(aws ssm send-command \
@@ -308,7 +303,7 @@ jobs:
         # set -e
 
         # Wait until command is executed
-        if [ "$WAIT_STATUS" -eq 0]; then
+        if [[ "$WAIT_STATUS" -eq 0 ]]; then
           # Get output 
           echo "✅ Command succeeded. Fetching command output from bastion..."
           aws ssm get-command-invocation \

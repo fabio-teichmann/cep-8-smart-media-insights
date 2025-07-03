@@ -8,8 +8,8 @@ echo "Acquiring kubeconfig..."
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
 echo "kube config at '~/.kube/config'..."
 cat ~/.kube/config
-echo "Present working directory..."
-pwd
+echo "Copying config to user dir 'ssm-user'..."
+sudo mv ~/.kube/config ../../home/ssm-user/.kube/config
 
 # Create required policies for ALB controller
 echo "Creating service account for ALB Controller..."
