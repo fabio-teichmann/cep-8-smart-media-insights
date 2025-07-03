@@ -3,8 +3,15 @@ if [[ -z "${AWS_REGION}" || -z "${CLUSTER_NAME}" ]]; then
   echo "[ERROR] AWS_REGION or CLUSTER_NAME is empty."
   exit 1
 fi
+echo "Acquiring kubeconfig..."
+
+echo "${CLUSTER_NAME} -- ${AWS_REGION}"
+
+aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
 
 # Create required policies for ALB controller
+echo "Creating service account for ALB Controller..."
+
 sudo curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.13.0/docs/install/iam_policy.json
 
 aws iam create-policy \
@@ -21,11 +28,7 @@ eksctl create iamserviceaccount \
     --approve
 
 # Add to Helm
-echo "Acquiring kubeconfig..."
-echo "${CLUSTER_NAME} -- ${AWS_REGION}"
-aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
-aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
-sudo aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
+echo "Installing ALB Controller from Helm chart..."
 
 helm repo add eks https://aws.github.io/eks-charts
 
