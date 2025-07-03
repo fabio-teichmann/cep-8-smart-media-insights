@@ -189,7 +189,7 @@ jobs:
         COMMAND_ID=$(aws ssm send-command \
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
-          --comment "install ALB Controller into helm" \
+          --comment "aqu" \
           --parameters commands=["aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}"] \
           --region ${{ vars.AWS_REGION }} \
           --query "Command.CommandId" \
@@ -207,7 +207,7 @@ jobs:
         # set -e
 
         # Wait until command is executed
-        if [ "$WAIT_STATUS" -eq "0"]; then
+        if [[ "$WAIT_STATUS" -eq 0 ]]; then
           # Get output 
           echo "✅ Command succeeded. Fetching command output from bastion..."
           aws ssm get-command-invocation \
@@ -278,6 +278,7 @@ jobs:
       continue-on-error: true
       run: |  
         set +e
+        aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}
 
         # aws ssm send-command \
         #   --document-name "AWS-RunShellScript" \

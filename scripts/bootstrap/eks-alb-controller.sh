@@ -5,8 +5,6 @@ if [[ -z "${AWS_REGION}" || -z "${CLUSTER_NAME}" ]]; then
 fi
 echo "Acquiring kubeconfig..."
 
-echo "${CLUSTER_NAME} -- ${AWS_REGION}"
-
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
 
 # Create required policies for ALB controller
