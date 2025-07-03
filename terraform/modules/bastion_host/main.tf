@@ -53,6 +53,11 @@ resource "aws_iam_role_policy_attachment" "bastion_ssm_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+resource "aws_iam_role_policy_attachment" "bastion_eks_admin" {
+  role = aws_iam_role.bastion_ssm_role.name
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+}
+
 # EKS specific IAM requirements to use bastion for app deployment
 data "aws_iam_policy_document" "bastion_eks_policies" {
   statement {
