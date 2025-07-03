@@ -207,7 +207,7 @@ jobs:
         # set -e
 
         # Wait until command is executed
-        if [ "$WAIT_STATUS" -eq 0]; then
+        if [ "$WAIT_STATUS" -eq "0"]; then
           # Get output 
           echo "✅ Command succeeded. Fetching command output from bastion..."
           aws ssm get-command-invocation \
