@@ -11,7 +11,7 @@ ls $PATH/.kube
 sudo $PATH/.kube
 
 echo "Caller Identity:"
-echo aws sst get-caller-identity
+echo aws sst get-caller-identity --query 'arn'
 
 echo "Setting config path..."
 export KUBECONFIG="../../root/.kube/"
