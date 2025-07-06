@@ -34,7 +34,7 @@ resource "aws_s3_object" "rendered_script" {
 
 resource "aws_s3_object" "rendered_script_deploy" {
     bucket = var.s3_static_bucket
-    key = "scripts/bootstrap/jelm-deploy-eks.sh"
+    key = "scripts/bootstrap/helm-deploy-eks.sh"
     content = local.app_deploy_script_rendered
     content_type = "text/x-shellscript"
 
