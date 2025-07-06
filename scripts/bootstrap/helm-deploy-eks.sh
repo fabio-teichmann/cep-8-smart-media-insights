@@ -17,6 +17,7 @@ sudo tar -xzf smart-media-0.1.0.tgz
 # deploy app using helm
 echo "🪖 -- installing helm charts..."
 helm upgrade -i smart-media ./smart-media \
+    --set region="${AWS_REGION}" \
     --set image.repository="${DOCKERHUB_USER}"/smart-media \
     --set env.logfireUrl="${LOGFIRE_URL}" \
     --set env.logfireProjectName="${LOGFIRE_PROJECT_NAME}" \
