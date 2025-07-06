@@ -9,11 +9,11 @@ locals {
   })
 
   app_deploy_script_rendered = templatefile("${path.module}/../../../scripts/bootstrap/helm-deploy-eks.sh", {
-    DOCKERHUB_USER = var.dockerhub_user
-    LOGFIRE_URL = var.logfire_url 
-    LOGFIRE_PROJECT_NAME = var.logfire_project_name
-    LOGFIRE_API_KEY = var.logfire_api_key
-    SVC_ACC_NAME = var.svc_acc_name
+    DOCKERHUB_USER = var.dockerhub_user,
+    LOGFIRE_URL = var.logfire_url,
+    LOGFIRE_PROJECT_NAME = var.logfire_project_name,
+    LOGFIRE_API_KEY = var.logfire_api_key,
+    SVC_ACC_NAME = var.svc_acc_name,
     SVC_ACC_ANNOT = var.svc_acc_annot
   })
 }
