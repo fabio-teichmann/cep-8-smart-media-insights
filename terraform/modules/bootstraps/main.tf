@@ -9,6 +9,8 @@ locals {
   })
 
   app_deploy_script_rendered = templatefile("${path.module}/../../../scripts/bootstrap/helm-deploy-eks.sh", {
+    CLUSTER_NAME = var.eks_cluster_name,
+    AWS_REGION = var.region,
     DOCKERHUB_USER = var.dockerhub_user,
     LOGFIRE_URL = var.logfire_url,
     LOGFIRE_PROJECT_NAME = var.logfire_project_name,
