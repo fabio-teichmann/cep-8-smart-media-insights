@@ -1,4 +1,4 @@
-resource "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {}
 
 locals {
   eks_alb_controller_rendered = templatefile("${path.module}/../../../scripts/bootstrap/eks-alb-controller.sh", {
