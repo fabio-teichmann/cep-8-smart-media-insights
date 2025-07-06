@@ -3,24 +3,21 @@ if [[ -z "${AWS_REGION}" || -z "${CLUSTER_NAME}" ]]; then
   echo "[ERROR] AWS_REGION or CLUSTER_NAME is empty."
   exit 1
 fi
-echo "Acquiring kubeconfig..."
 
+echo "☸️ -- acquiring kubeconfig..."
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
-echo "kube config path..."
-ls $PATH/.kube/
-sudo ls $PATH/.kube/
+# echo "🔁 -- updating kube config path (root user)..."
+# ls $PATH/.kube/
+# sudo ls $PATH/.kube/
 
-echo "Caller Identity:"
-aws sst get-caller-identity --query 'arn' | echo
+# echo "Caller Identity:"
+# aws sst get-caller-identity --query "Arn" | echo $_
 
-echo "Setting config path..."
+echo "🔁 -- updating kube config path (root user)..."
 export KUBECONFIG="../../root/.kube/config"
 
-# echo "Copying config to user dir 'ssm-user'..."
-# sudo mv ~/.kube/config ../../home/ssm-user/.kube/config
-
 # Create required policies for ALB controller
-echo "Creating service account for ALB Controller..."
+echo "🛂 -- creating service account for ALB Controller..."
 
 sudo curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.13.0/docs/install/iam_policy.json
 
@@ -38,7 +35,7 @@ eksctl create iamserviceaccount \
     --approve
 
 # Add to Helm
-echo "Installing ALB Controller from Helm chart..."
+echo "⚙️ -- installing ALB Controller from Helm chart..."
 
 helm repo add eks https://aws.github.io/eks-charts
 

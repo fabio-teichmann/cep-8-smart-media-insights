@@ -182,54 +182,6 @@ jobs:
           fi
         done
 
-    - name: acquire-kubeconfig
-      shell: bash
-      continue-on-error: true
-      run: |  
-        set +e
-
-        # Capture command id
-        COMMAND_ID=$(aws ssm send-command \
-          --document-name "AWS-RunShellScript" \
-          --instance-ids ${{ steps.extract.outputs.bastion_id }} \
-          --comment "aqu" \
-          --parameters commands=["aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}"] \
-          --region ${{ vars.AWS_REGION }} \
-          --query "Command.CommandId" \
-          --output text)
-
-        echo "Command (ID="$COMMAND_ID") submitted to bastion host. Waiting for completion..."
-
-        aws ssm wait command-executed \
-          --command-id "$COMMAND_ID" \
-          --instance-id ${{ steps.extract.outputs.bastion_id }} \
-          --region ${{ vars.AWS_REGION }}
-        WAIT_STATUS=$?
-        echo "Wait status... "$WAIT_STATUS""
-
-        # set -e
-
-        # Wait until command is executed
-        if [[ "$WAIT_STATUS" -eq 0 ]]; then
-          # Get output 
-          echo "✅ Command succeeded. Fetching command output from bastion..."
-          aws ssm get-command-invocation \
-            --command-id "$COMMAND_ID" \
-            --instance-id ${{ steps.extract.outputs.bastion_id }} \
-            --region ${{ vars.AWS_REGION }} \
-            --output text \
-            --query "StandardOutputContent"
-
-        else
-          # Get error(s)
-          echo "❌ Command failed. Fetching error output (if any) from bastion..."
-          aws ssm get-command-invocation \
-            --command-id "$COMMAND_ID" \
-            --instance-id ${{ steps.extract.outputs.bastion_id }} \
-            --region ${{ vars.AWS_REGION }} \
-            --output text \
-            --query "StandardErrorContent"
-        fi
     # NOTE: Currently needs to be done manually - looking for a fix later; this has been blocking for too long now
     # - name: patch-aws-auth-in-eks
     #   shell: bash
@@ -334,7 +286,7 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
           --comment "deploy helm chart on EKS" \
-          --parameters '{"commands":["aws eks update-kubeconfig --name ${{ steps.extract.outputs.cluster_name }} --region ${{ vars.AWS_REGION }}", "helm upgrade -i smart-media ./helm-charts/smart-media --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media --set env.logfireUrl=${{ vars.LOGFIRE_URL }} --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} --set secrets.logfireApiToken=${{ secrets.LOGFIRE_API_KEY}} --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} --set serviceAccount.annotations.'eks\.amazonaws\.com/role-arn'=${{ steps.extract.outputs.svc_acc_annot }} --set region=${{ vars.AWS_REGION }} --set dynamoTable=${{ steps.outputs.dynamo_table }} --set kdsStreamName=${{ steps.outputs.kds_stream_name }} -—set s3MediaBucket=${{ steps.outputs.s3_media_bucket }}"]}' \
+          --parameters '{"commands":["helm upgrade -i smart-media ./helm-charts/smart-media --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media --set env.logfireUrl=${{ vars.LOGFIRE_URL }} --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} --set secrets.logfireApiToken=${{ secrets.LOGFIRE_API_KEY}} --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} --set serviceAccount.annotations.'eks\.amazonaws\.com/role-arn'=${{ steps.extract.outputs.svc_acc_annot }} --set region=${{ vars.AWS_REGION }} --set dynamoTable=${{ steps.outputs.dynamo_table }} --set kdsStreamName=${{ steps.outputs.kds_stream_name }} -—set s3MediaBucket=${{ steps.outputs.s3_media_bucket }}"]}' \
           --region ${{ vars.AWS_REGION }} \
           --query "Command.CommandId" \
           --output text)
@@ -350,7 +302,7 @@ jobs:
         # set -e
 
         # Wait until command is executed
-        if [ "$WAIT_STATUS" -eq 0]; then
+        if [[ "$WAIT_STATUS" -eq 0 ]]; then
           # Get output 
           echo "✅ Command succeeded. Fetching command output from bastion..."
           aws ssm get-command-invocation \
