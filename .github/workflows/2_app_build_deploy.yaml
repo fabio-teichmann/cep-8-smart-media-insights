@@ -93,7 +93,11 @@ jobs:
           -var="env=dev" \
           -var="eks_svc_acc_name=smart-media-cluster-svc-acc" \
           -var="user_ip=${{ vars.USER_IP_ADDRESS }}" \
-          -var="s3_static_bucket=${{ vars.AWS_STATIC_BUCKET }}"
+          -var="s3_static_bucket=${{ vars.AWS_STATIC_BUCKET }}" \
+          -var="logfire_url=${{ vars.LOGFIRE_URL }}" \
+          -var="logfire_project_name=${{ vars.LOGFIRE_PROJECT_NAME }}" \
+          -var="logfire_api_key=${{ secrets.LOGFIRE_API_KEY }}" \
+          -var="dockerhub_user=${{ vars.DOCKERHUB_USER }}"
         terraform output -json > tf-outputs.json
 
         echo '### TerraForm Outputs:' >> $GITHUB_STEP_SUMMARY
@@ -286,7 +290,7 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
           --comment "deploy helm chart on EKS" \
-          --parameters '{"commands":["helm upgrade -i smart-media ./helm-charts/smart-media --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media --set env.logfireUrl=${{ vars.LOGFIRE_URL }} --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} --set secrets.logfireApiToken=${{ secrets.LOGFIRE_API_KEY}} --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} --set serviceAccount.annotations.'eks\.amazonaws\.com/role-arn'=${{ steps.extract.outputs.svc_acc_annot }} --set region=${{ vars.AWS_REGION }} --set dynamoTable=${{ steps.outputs.dynamo_table }} --set kdsStreamName=${{ steps.outputs.kds_stream_name }} --set s3MediaBucket=${{ steps.outputs.s3_media_bucket }}"]}' \
+          --parameters '{"commands":["../local/src/bootstrap/helm-deploy-eks.sh"]}' \
           --region ${{ vars.AWS_REGION }} \
           --query "Command.CommandId" \
           --output text)

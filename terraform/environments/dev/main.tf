@@ -105,6 +105,27 @@ module "vpc_endpoints" {
     depends_on = [ module.ingestion ]
 }
 
+# render scripts
+module "bootstrap" {
+  source = "../../modules/bootstraps"
+
+  vpc_id = module.vpc.vpc_id
+  eks_cluster_name = module.eks.cluster_name
+  env = var.env
+
+  s3_static_bucket = var.s3_static_bucket
+
+  logfire_url = var.logfire_url
+  logfire_project_name = var.logfire_project_name
+  logfire_api_key = var.logfire_api_key
+
+  dockerhub_user = var.dockerhub_user
+
+  svc_acc_name = module.eks.eks_svc_acc_name
+  svc_acc_annot = module.eks.irsa_role_arn
+}
+
+
 # module "bastion_eks_config" {
 #   source = "../../modules/bastion_eks_config"
 

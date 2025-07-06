@@ -1,0 +1,1 @@
+logfire_api_key = ""

@@ -47,3 +47,12 @@ variable "s3_static_bucket" {
 #         error_message = "app port for ALB must be between 1,024 and 49,151"
 #     }
 # }
+
+# for script rendering
+variable "dockerhub_user" { type = string }
+variable "logfire_url" { type = string }
+variable "logfire_project_name" { type = string }
+variable "logfire_api_key" { 
+    type = string 
+    sensitive = true
+}

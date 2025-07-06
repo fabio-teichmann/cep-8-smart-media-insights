@@ -1,4 +1,4 @@
-data "aws_caller_identity" "current" {}
+# data "aws_caller_identity" "current" {}
 
 resource "aws_security_group" "bastion_sg" {
   vpc_id = var.vpc_id
@@ -144,23 +144,23 @@ resource "aws_instance" "bastion_host" {
 
 }
 
-locals {
-  eks_alb_controller_rendered = templatefile("${path.module}/../../../scripts/bootstrap/eks-alb-controller.sh", {
-    CLUSTER_NAME = var.eks_cluster_name,
-    AWS_REGION = var.region,
-    AWS_ACCOUNT_ID = data.aws_caller_identity.current.account_id,
-    VPC_ID = var.vpc_id
-  })
-}
+# locals {
+#   eks_alb_controller_rendered = templatefile("${path.module}/../../../scripts/bootstrap/eks-alb-controller.sh", {
+#     CLUSTER_NAME = var.eks_cluster_name,
+#     AWS_REGION = var.region,
+#     AWS_ACCOUNT_ID = data.aws_caller_identity.current.account_id,
+#     VPC_ID = var.vpc_id
+#   })
+# }
 
-resource "aws_s3_object" "rendered_script" {
-  bucket = var.s3_static_bucket
-  key    = "scripts/bootstrap/eks-alb-controller.sh"
-  content = local.eks_alb_controller_rendered
-  content_type = "text/x-shellscript"
+# resource "aws_s3_object" "rendered_script" {
+#   bucket = var.s3_static_bucket
+#   key    = "scripts/bootstrap/eks-alb-controller.sh"
+#   content = local.eks_alb_controller_rendered
+#   content_type = "text/x-shellscript"
 
-  tags = {
-    Name        = "ALB Controller script"
-    Environment = var.env
-  }
-}
+#   tags = {
+#     Name        = "ALB Controller script"
+#     Environment = var.env
+#   }
+# }
