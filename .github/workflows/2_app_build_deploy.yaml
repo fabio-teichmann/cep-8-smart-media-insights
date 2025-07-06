@@ -205,6 +205,38 @@ jobs:
             sleep 10
           fi
         done
+    
+    - name: Wait for EC2 to finish bootstrap (via SSM)
+      run: |
+        INSTANCE_ID=${{ steps.extract.outputs.bastion_id }}
+
+        echo "Waiting for instance to be in running state..."
+        aws ec2 wait instance-status-ok --instance-ids $INSTANCE_ID
+
+        echo "Waiting for bootstrap_done signal..."
+        while true; do
+          STATUS=$(aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Check if bootstrap complete" \
+            --parameters commands="test -f /var/log/startup_done" \
+            --query "Command.CommandId" --output text)
+
+          sleep 10
+          INVOCATION=$(aws ssm list-command-invocations \
+            --command-id "$STATUS" \
+            --details \
+            --query "CommandInvocations[0].Status" --output text)
+
+          if [[ "$INVOCATION" == "Success" ]]; then
+            echo "Bastion is ready."
+            break
+          fi
+
+          echo "Still waiting for bootstrap... (status: $INVOCATION)"
+          sleep 15
+        done
+
 
     # NOTE: Currently needs to be done manually - looking for a fix later; this has been blocking for too long now
     # - name: patch-aws-auth-in-eks

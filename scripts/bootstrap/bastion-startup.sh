@@ -46,11 +46,6 @@ echo " -> helm-deploy-eks script"
 sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/helm-deploy-eks.sh /usr/local/src/bootstrap/helm-deploy-eks.sh
 sudo chmod +x /usr/local/src/bootstrap/helm-deploy-eks.sh
 
-# setting up kubeconfig
-# echo "region: ${AWS_REGION}"
-# echo "cluster-name: ${CLUSTER_NAME}"
-
-# echo "Setting up kubeconfig..."
-# aws eks update-kubeconfig \
-#     --region "${AWS_REGION}" \
-#     --name "${CLUSTER_NAME}"
+# signal bootstrap ready
+touch /var/log/startup_done
+echo "START_UP SUCCESS" > /var/log/startup_done
