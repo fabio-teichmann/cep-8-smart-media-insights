@@ -286,7 +286,7 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
           --comment "deploy helm chart on EKS" \
-          --parameters '{"commands":["helm upgrade -i smart-media ./helm-charts/smart-media --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media --set env.logfireUrl=${{ vars.LOGFIRE_URL }} --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} --set secrets.logfireApiToken=${{ secrets.LOGFIRE_API_KEY}} --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} --set serviceAccount.annotations.'eks\.amazonaws\.com/role-arn'=${{ steps.extract.outputs.svc_acc_annot }} --set region=${{ vars.AWS_REGION }} --set dynamoTable=${{ steps.outputs.dynamo_table }} --set kdsStreamName=${{ steps.outputs.kds_stream_name }} -—set s3MediaBucket=${{ steps.outputs.s3_media_bucket }}"]}' \
+          --parameters '{"commands":["helm upgrade -i smart-media ./helm-charts/smart-media --set image.repository=${{ vars.DOCKERHUB_USER }}/smart-media --set env.logfireUrl=${{ vars.LOGFIRE_URL }} --set env.logfireProjectName=${{ vars.LOGFIRE_PROJECT_NAME }} --set secrets.logfireApiToken=${{ secrets.LOGFIRE_API_KEY}} --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} --set serviceAccount.annotations.'eks\.amazonaws\.com/role-arn'=${{ steps.extract.outputs.svc_acc_annot }} --set region=${{ vars.AWS_REGION }} --set dynamoTable=${{ steps.outputs.dynamo_table }} --set kdsStreamName=${{ steps.outputs.kds_stream_name }} --set s3MediaBucket=${{ steps.outputs.s3_media_bucket }}"]}' \
           --region ${{ vars.AWS_REGION }} \
           --query "Command.CommandId" \
           --output text)
