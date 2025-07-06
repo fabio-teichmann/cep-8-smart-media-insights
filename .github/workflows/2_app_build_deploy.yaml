@@ -25,6 +25,26 @@ jobs:
         context: ./app/
         push: true
         tags: ${{ vars.DOCKERHUB_USER }}/smart-media:latest
+    
+  upload-helm-charts:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: authenticate-to-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: package-charts
+      run: |
+        helm package ./helm-charts/smart-media
+
+    - name: acquire-be-config
+      run: |
+        aws s3 cp smart-media-0.1.0.tgz s3://${{ vars.AWS_STATIC_BUCKET }}/helm/
 
   # package-lambda:
   #   runs-on: ubuntu-latest
