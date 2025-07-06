@@ -8,7 +8,7 @@ echo "Acquiring kubeconfig..."
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
 echo "kube config path..."
 ls $PATH/.kube/
-sudo $PATH/.kube/
+sudo ls $PATH/.kube/
 
 echo "Caller Identity:"
 aws sst get-caller-identity --query 'arn' | echo
