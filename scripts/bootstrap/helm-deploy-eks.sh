@@ -17,7 +17,5 @@ helm upgrade -i smart-media ./helm-charts/smart-media \
     --set env.logfireUrl="${LOGFIRE_URL}" \
     --set env.logfireProjectName="${LOGFIRE_PROJECT_NAME}" \
     --set secrets.logfireApiToken="${LOGFIRE_API_KEY}" \
-    --set serviceAccount.name="${SVC_ACC_NAME}" ${{ steps.extract.outputs.svc_acc_name }} \
-    --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="${SVC_ACC_ANNOT"} ${{steps.extract.outputs.svc_acc_annot}}
-
-    
+    --set serviceAccount.name="${SVC_ACC_NAME}" \
+    --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="${SVC_ACC_ANNOT}"
