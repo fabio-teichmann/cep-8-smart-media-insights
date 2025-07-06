@@ -65,7 +65,7 @@ jobs:
   #       path: ./scripts/lambda_ingest/lambda_ingest.zip
 
   apply-infra:
-    # needs: [ package-lambda ]
+    needs: [ upload-helm-charts ]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

@@ -15,7 +15,7 @@ sudo aws s3 cp s3://cep-8-static-bucket/helm/smart-media-0.1.0.tgz .
 sudo tar -xzf smart-media-0.1.0.tgz
 
 # deploy app using helm
-echo "🪖 -- installing helm charts...
+echo "🪖 -- installing helm charts..."
 helm upgrade -i smart-media ./smart-media \
     --set image.repository="${DOCKERHUB_USER}"/smart-media \
     --set env.logfireUrl="${LOGFIRE_URL}" \
