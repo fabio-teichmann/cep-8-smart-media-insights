@@ -6,10 +6,18 @@ fi
 echo "Acquiring kubeconfig..."
 
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
-echo "kube config at '~/.kube/config'..."
-cat ~/.kube/config
-echo "Copying config to user dir 'ssm-user'..."
-sudo mv ~/.kube/config ../../home/ssm-user/.kube/config
+echo "kube config path..."
+ls $PATH/.kube
+sudo $PATH/.kube
+
+echo "Caller Identity:"
+echo aws sst get-caller-identity
+
+echo "Setting config path..."
+export KUBECONFIG="../../root/.kube/"
+
+# echo "Copying config to user dir 'ssm-user'..."
+# sudo mv ~/.kube/config ../../home/ssm-user/.kube/config
 
 # Create required policies for ALB controller
 echo "Creating service account for ALB Controller..."
