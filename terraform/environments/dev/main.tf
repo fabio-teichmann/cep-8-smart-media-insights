@@ -127,7 +127,7 @@ module "bootstrap" {
   svc_acc_name = module.eks.eks_svc_acc_name
   svc_acc_annot = module.eks.irsa_role_arn
 
-  depends_on = [ module.vpc, module.eks, module.bastion_host, module.ingestion ]
+  depends_on = [ module.vpc, module.eks, module.ingestion ]
 }
 
 
