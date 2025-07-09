@@ -295,7 +295,7 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
           --comment "install ALB Controller into helm" \
-          --parameters commands=["../local/src/bootstrap/eks-alb-controller.sh"] \
+          --parameters commands=["/usr/local/src/bootstrap/eks-alb-controller.sh"] \
           --region ${{ vars.AWS_REGION }} \
           --query "Command.CommandId" \
           --output text)
@@ -342,7 +342,7 @@ jobs:
           --document-name "AWS-RunShellScript" \
           --instance-ids ${{ steps.extract.outputs.bastion_id }} \
           --comment "install helm charts (API endpoints)" \
-          --parameters commands=["../local/src/bootstrap/helm-deploy-eks.sh"] \
+          --parameters commands=["/usr/local/src/bootstrap/helm-deploy-eks.sh"] \
           --region ${{ vars.AWS_REGION }} \
           --query "Command.CommandId" \
           --output text)
