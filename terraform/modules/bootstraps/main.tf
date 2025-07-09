@@ -12,9 +12,14 @@ locals {
     CLUSTER_NAME = var.eks_cluster_name,
     AWS_REGION = var.region,
     DOCKERHUB_USER = var.dockerhub_user,
+    
     LOGFIRE_URL = var.logfire_url,
     LOGFIRE_PROJECT_NAME = var.logfire_project_name,
     LOGFIRE_API_KEY = var.logfire_api_key,
+    DYNAMO_TABLE = var.dynamodb_status_table,
+    KDS_STREAM_NAME = var.kinesis_stream_name,
+    S3_MEDIA_BUCKET = var.s3_media_bucket,
+
     SVC_ACC_NAME = var.svc_acc_name,
     SVC_ACC_ANNOT = var.svc_acc_annot
   })

@@ -118,13 +118,16 @@ module "bootstrap" {
   logfire_url = var.logfire_url
   logfire_project_name = var.logfire_project_name
   logfire_api_key = var.logfire_api_key
+  dynamodb_status_table = module.ingestion.dynamodb_status_table
+  s3_media_bucket = module.ingestion.s3_media_bucket
+  kinesis_stream_name = module.ingestion.kinesis_stream_name
 
   dockerhub_user = var.dockerhub_user
 
   svc_acc_name = module.eks.eks_svc_acc_name
   svc_acc_annot = module.eks.irsa_role_arn
 
-  depends_on = [ module.vpc, module.eks, module.bastion_host ]
+  depends_on = [ module.vpc, module.eks, module.bastion_host, module.ingestion ]
 }
 
 
