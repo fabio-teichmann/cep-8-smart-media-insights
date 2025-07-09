@@ -42,7 +42,7 @@ jobs:
       run: |
         helm package ./helm-charts/smart-media
 
-    - name: acquire-be-config
+    - name: upload-helm-charts-package-to-s3-static
       run: |
         aws s3 cp smart-media-0.1.0.tgz s3://${{ vars.AWS_STATIC_BUCKET }}/helm/
 
