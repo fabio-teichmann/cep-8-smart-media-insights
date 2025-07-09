@@ -22,5 +22,8 @@ helm upgrade -i smart-media ./smart-media \
     --set env.logfireUrl="${LOGFIRE_URL}" \
     --set env.logfireProjectName="${LOGFIRE_PROJECT_NAME}" \
     --set secrets.logfireApiToken="${LOGFIRE_API_KEY}" \
+    --set env.dynamoTable="${DYNAMO_TABLE}" \
+    --set env.kdsStreamName="${KDS_STREAM_NAME}" \
+    --set env.s3MediaBucket="${S3_MEDIA_BUCKET}" \
     --set serviceAccount.name="${SVC_ACC_NAME}" \
     --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="${SVC_ACC_ANNOT}"
