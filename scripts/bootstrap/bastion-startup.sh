@@ -37,7 +37,7 @@ sudo curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksc
 sudo tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && sudo rm eksctl_$PLATFORM.tar.gz
 sudo mv /tmp/eksctl /usr/local/bin
 
-echo "📥 -- downloading bootstrap scripts from S3..."
+echo "📥 -- downloading bootstrap scripts from s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/..."
 echo " -> eks-alb-controller script"
 sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/eks-alb-controller.sh /usr/local/src/bootstrap/eks-alb-controller.sh
 sudo chmod +x /usr/local/src/bootstrap/eks-alb-controller.sh
