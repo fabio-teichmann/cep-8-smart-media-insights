@@ -46,6 +46,10 @@ echo " -> helm-deploy-eks script"
 sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/helm-deploy-eks.sh /usr/local/src/bootstrap/helm-deploy-eks.sh
 sudo chmod +x /usr/local/src/bootstrap/helm-deploy-eks.sh
 
+echo " -> cloudformation-cleanup script"
+sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/cloudformation-cleanup.sh /usr/local/src/bootstrap/cloudformation-cleanup.sh
+sudo chmod +x /usr/local/src/bootstrap/cloudformation-cleanup.sh
+
 # signal bootstrap ready
 touch /var/log/startup_done
 echo "START_UP SUCCESS" > /var/log/startup_done

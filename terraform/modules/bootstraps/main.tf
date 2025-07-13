@@ -12,7 +12,7 @@ locals {
     CLUSTER_NAME = var.eks_cluster_name,
     AWS_REGION = var.region,
     DOCKERHUB_USER = var.dockerhub_user,
-    
+
     LOGFIRE_URL = var.logfire_url,
     LOGFIRE_PROJECT_NAME = var.logfire_project_name,
     LOGFIRE_API_KEY = var.logfire_api_key,
@@ -23,6 +23,8 @@ locals {
     SVC_ACC_NAME = var.svc_acc_name,
     SVC_ACC_ANNOT = var.svc_acc_annot
   })
+
+  cloud_formation_stack_rendered = templatefile("${path.module}/../../../scripts/bootstrap/cloudformation-cleanup.sh")
 }
 
 resource "aws_s3_object" "rendered_script" {
@@ -45,6 +47,18 @@ resource "aws_s3_object" "rendered_script_deploy" {
 
     tags = {
         Name = "Helm deploy charts script"
+        Environment = var.env
+    }
+}
+
+resource "aws_s3_object" "rendered_script_cloud_formation" {
+    bucket = var.s3_static_bucket
+    key = "scripts/bootstrap/cloudformation-cleanup.sh"
+    content = local.cloud_formation_stack_rendered
+    content_type = "text/x-shellscript"
+
+    tags = {
+        Name = "Cleanup CloudFormation Stack script"
         Environment = var.env
     }
 }
