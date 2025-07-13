@@ -2,6 +2,8 @@ import os
 from uuid import uuid4
 from datetime import datetime
 from fastapi import Response, status, File, UploadFile
+from fastapi.responses import JSONResponse
+
 import boto3
 from botocore.exceptions import ClientError
 import logfire
@@ -19,6 +21,10 @@ kds_client = boto3.client("kinesis", region_name=AWS_REGION)
 s3_client = boto3.client("s3", region_name=AWS_REGION)
 
 app = create_app()
+
+@app.get("/health")
+def health_check():
+    return JSONResponse(content={"status": "ok"})
 
 @app.post("/upload-media", response_model=MediaUploadResponse, status_code=status.HTTP_202_ACCEPTED)
 async def upload_media(response: Response, file: UploadFile = File(...)) -> str:

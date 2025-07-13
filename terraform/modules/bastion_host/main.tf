@@ -83,6 +83,7 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       "cloudformation:ListStacks",
       "cloudformation:CreateStack",
       "cloudformation:DescribeStacks",
+      "cloudformation:DeleteStack"
     ]
     resources = ["*"] # Required because this API doesn't use a cluster ARN
   }
