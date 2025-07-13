@@ -20,14 +20,14 @@ spec:
         path: "/media-upload"
         backend:
           service:
-            name: smart-media # upload-svc
+            name: smart-media-svc # upload-svc
             port: 
               number: 8000
       - pathType: Prefix
         path: "/results"
         backend:
           service:
-            name: smart-media # results-svc
+            name: smart-media-svc # results-svc
             port:
               number: 8000
 
