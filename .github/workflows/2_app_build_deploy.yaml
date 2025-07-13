@@ -206,7 +206,7 @@ jobs:
           fi
         done
     
-    - name: Wait for EC2 to finish bootstrap (via SSM)
+    - name: ensure-bastion-bootstrap-finished
       run: |
         INSTANCE_ID=${{ steps.extract.outputs.bastion_id }}
 

@@ -6,15 +6,9 @@ fi
 
 echo "☸️ -- acquiring kubeconfig..."
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
-# echo "🔁 -- updating kube config path (root user)..."
-# ls $PATH/.kube/
-# sudo ls $PATH/.kube/
-
-# echo "Caller Identity:"
-# aws sst get-caller-identity --query "Arn" | echo $_
 
 echo "🔁 -- updating kube config path (root user)..."
-export KUBECONFIG="../../root/.kube/config"
+export KUBECONFIG="/root/.kube/config"
 
 # Create required policies for ALB controller
 echo "🛂 -- creating service account for ALB Controller..."

@@ -8,11 +8,23 @@ echo "☸️ -- acquiring kubeconfig..."
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
 
 echo "🔁 -- updating kube config path (root user)..."
-export KUBECONFIG="../../root/.kube/config"
+export KUBECONFIG="/root/.kube/config"
 
 echo "📥 -- downloading Helm charts from S3..."
 sudo aws s3 cp s3://cep-8-static-bucket/helm/smart-media-0.1.0.tgz .
 sudo tar -xzf smart-media-0.1.0.tgz
+
+echo "🔍 -- Waiting for ALB webhook endpoint to become available..."
+
+for i in {1..30}; do
+  ready=$(kubectl get endpoints -n kube-system aws-load-balancer-webhook-service -o jsonpath='{.subsets[*].addresses[*].ip}' 2>/dev/null)
+  if [[ ! -z "$ready" ]]; then
+    echo "✅ -- ALB webhook service is ready."
+    break
+  fi
+  echo "⏳ -- Waiting for webhook endpoint..."
+  sleep 5
+done
 
 # deploy app using helm
 echo "🪖 -- installing helm charts..."
