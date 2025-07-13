@@ -25,7 +25,10 @@ locals {
   })
 
   cloud_formation_stack_rendered = templatefile("${path.module}/../../../scripts/bootstrap/cloudformation-cleanup.sh", {
-    AWS_REGION = var.region
+    AWS_REGION = var.region,
+    CLUSTER_NAME= var.eks_cluster_name,
+    NAMESPACE="kube-system",
+    SERVICE_ACCOUNT_NAME="aws-load-balancer-controller"
   })
 }
 
