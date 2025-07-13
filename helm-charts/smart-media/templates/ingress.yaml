@@ -17,7 +17,7 @@ spec:
       paths:
       # TODO: create separate deployments for upload-svc and results-svc
       - pathType: Prefix
-        path: /media-upload
+        path: /upload-media
         backend:
           service:
             name: smart-media-svc # upload-svc
