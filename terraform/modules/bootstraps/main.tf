@@ -24,7 +24,9 @@ locals {
     SVC_ACC_ANNOT = var.svc_acc_annot
   })
 
-  cloud_formation_stack_rendered = templatefile("${path.module}/../../../scripts/bootstrap/cloudformation-cleanup.sh")
+  cloud_formation_stack_rendered = templatefile("${path.module}/../../../scripts/bootstrap/cloudformation-cleanup.sh", {
+    AWS_REGION = var.region
+  })
 }
 
 resource "aws_s3_object" "rendered_script" {
