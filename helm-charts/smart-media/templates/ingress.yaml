@@ -17,14 +17,14 @@ spec:
       paths:
       # TODO: create separate deployments for upload-svc and results-svc
       - pathType: Prefix
-        path: "/media-upload"
+        path: /media-upload
         backend:
           service:
             name: smart-media-svc # upload-svc
             port: 
               number: 8000
       - pathType: Prefix
-        path: "/results"
+        path: /results
         backend:
           service:
             name: smart-media-svc # results-svc
