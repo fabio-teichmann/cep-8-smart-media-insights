@@ -43,7 +43,7 @@ module "bastion_host" {
 
   s3_static_bucket = var.s3_static_bucket
 
-#   depends_on = [module.vpc]
+  depends_on = [ module.bootstrap ]
 }
 
 module "eks" {
