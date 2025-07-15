@@ -72,6 +72,7 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       "sts:AssumeRole",
       "sts:AssumeRoleWithWebIdentity",
       "iam:CreateRole",
+      "iam:DeleteRole",
       "iam:CreatePolicy",
       "iam:TagRole",
       "iam:UpdateAssumeRolePolicy",
