@@ -77,6 +77,7 @@ data "aws_iam_policy_document" "bastion_eks_policies" {
       "iam:UpdateAssumeRolePolicy",
       "iam:PutRolePolicy",
       "iam:AttachRolePolicy",
+      "iam:DetachRolePolicy",
       "iam:PassRole",
       "iam:GetRole",
       "iam:GetOpenIDConnectProvider",
