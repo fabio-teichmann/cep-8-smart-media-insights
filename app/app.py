@@ -44,12 +44,14 @@ async def upload_media(response: Response, file: UploadFile = File(...)) -> str:
     s3_key = f"uploads/{media_type}/{request_id}_{file.filename}"
     
     try:
+        logfire.info("uploading file to S3...")
         r = s3_client.put_object(
             Bucket=S3_MEDIA_BUCKET,
             Body=await file.read(),
             Key=s3_key,
             ContentType = file.content_type
         )
+        logfire.debug(f"s3 upload response: {r}")
     except ClientError as e:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         logfire.error(f"S3 client error: {e}")
@@ -63,18 +65,21 @@ async def upload_media(response: Response, file: UploadFile = File(...)) -> str:
         status="accepted",
         media_type=media_type,
     )
+    logfire.debug(f"metadata obj: {meta}")
     try:
+        logfire.info("sending metadata to kinesis...")
         # send metadata to Kinesis
         r = kds_client.put_record(
             StreamName=KDS_STREAM_NAME,
             Data=meta.model_dump_json().encode("utf-8"),
             PartitionKey="test",
         )
+        logfire.debug(f"kinesis response: {r}")
     except ClientError as e:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         logfire.error(f"KDS client error: {e}")
         return e
-
+    logfire.info("all steps completed...")
     return MediaUploadResponse(request_id=str(request_id))
     
 
