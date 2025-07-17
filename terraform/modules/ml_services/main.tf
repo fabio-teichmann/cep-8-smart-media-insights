@@ -47,7 +47,7 @@ resource "aws_lambda_function" "s3_to_comprehend_to_dynamo" {
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "lambda_handler.lambda_handler"
 
-  source_code_hash = filebase64sha256("${local.lambda_ingest_path}/lambda_ingest.zip")
+  source_code_hash = filebase64sha256("${local.lambda_ingest_path}/lambda_comprehend.zip")
 
   runtime     = "python3.12"
   timeout     = 10
@@ -73,3 +73,4 @@ resource "aws_lambda_function" "s3_to_comprehend_to_dynamo" {
 
 #   starting_position = "LATEST"
 # }
+
