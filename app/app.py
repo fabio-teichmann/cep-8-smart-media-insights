@@ -102,6 +102,10 @@ def get_results(request_id: str, response: Response):
         logfire.error(f"Dynamo client error: {e}")
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return {"error": e} 
+    except Exception as e:
+        logfire.error(f"error: {e}")
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return {"error": e} 
     
     item = r.get("Item")
     if not item or "status" not in item:
