@@ -12,6 +12,7 @@ spec:
       labels:
         app: smart-media
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       containers: 
         - name: smart-media
           image: fabioteichmann/smart-media:latest
