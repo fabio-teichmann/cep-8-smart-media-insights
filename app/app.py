@@ -127,6 +127,10 @@ def get_results(request_id: str, response: Response):
     elif request_status == "processing":
         logfire.info("media is still being processed")
         response.status_code = status.HTTP_202_ACCEPTED
+    
+    elif request_status == "accepted":
+        logfire.info("media is still being processed")
+        response.status_code = status.HTTP_202_ACCEPTED
 
     else:
         logfire.warn(f"status: {request_status}")
