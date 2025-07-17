@@ -60,7 +60,7 @@ for i in {1..30}; do
         echo "⏳ -- Waiting for bootstrap script upload to complete..."
         sleep 5
     fi
-end
+done
 
 echo "❌ -- Object does NOT exist"
 exit 1
