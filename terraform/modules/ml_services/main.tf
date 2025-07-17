@@ -1,5 +1,5 @@
 locals {
-  lambda_ingest_path = "${path.module}/../../../scripts/lambda_ingest"
+  lambda_ingest_path = "${path.module}/../../../scripts/lambda_comprehend"
 }
 
 # IAM for Lambda
