@@ -1,5 +1,9 @@
 .venv
 **/__pycache__
-**/*.zip
+**.zip
+**.tgz
 **/build
 **.DS_Store
+
+**gha_runner
+**gha-runner**

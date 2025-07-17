@@ -29,4 +29,16 @@ There are essentially two ways to configure an ALB for EKS:
 
 > [!IMPORTANT]
 > For simplicity I will choose a single app for both endpoints as a starting point. Option 2 will be kept in the refactor log for later versions (e.g., if endpoint access patterns reveal stark differences).
-    
+
+---
+
+## Current manual setups:
+> [!INFO]
+> Currently, the CI/CD automation does not work end-to-end due to EKS's additional security layer (user registered in ConfigMap) for authentication. Once this is done from the admin, all else works as expected. I deferred solving this "minor" issue for the benefit of moving forward with the MVP.
+
+After `terraform apply`, update cluster ConfigMap to add bastion host:
+```bash
+aws eks update-kubeconfig --region us-east-1 --name smart-media-eks
+
+eksctl create iamidentitymapping --cluster smart-media-eks --region us-east-1 --arn arn:aws:iam::<ACC_NUM>:role/smart-media-bastion-ssm-role --group system:masters --username smart-media-bastion-ssm-role
+```
