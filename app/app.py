@@ -12,7 +12,7 @@ from helpers import create_app
 from models import MediaMeta, MediaUploadResponse
 
 AWS_REGION = os.getenv("AWS_REGION")
-DYNAMO_TABLE = os.getenv("DYNAMO_TABLE_NAME")
+DYNAMO_TABLE = os.getenv("DYNAMO_TABLE")
 KDS_STREAM_NAME = os.getenv("KDS_STREAM_NAME")
 S3_MEDIA_BUCKET = os.getenv("S3_MEDIA_BUCKET")
 
