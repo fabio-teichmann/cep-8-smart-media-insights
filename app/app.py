@@ -86,6 +86,7 @@ async def upload_media(response: Response, file: UploadFile = File(...)) -> str:
 @app.get("/results/{request_id}", status_code=status.HTTP_200_OK)
 def get_results(request_id: str, response: Response):
     """checks results' status and retrieves results if processed"""
+    logfire.info(f"Checking results for request: {request_id}...")
     try:
         r = dynamo_client.get_item(
             TableName = DYNAMO_TABLE,
@@ -95,6 +96,7 @@ def get_results(request_id: str, response: Response):
                 }
             }
         )
+        logfire.debug(f"Dynamo response: {r}")
     except ClientError as e:
         logfire.error(f"Dynamo client error: {e}")
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -103,6 +105,7 @@ def get_results(request_id: str, response: Response):
     item = r.get("Item")
     if not item or "status" not in item:
         response.status_code = status.HTTP_404_NOT_FOUND
+        logfire.error("Result not found or incomplete")
         return {"error": "Result not found or incomplete"}
         
     request_status = item["status"]["S"]
