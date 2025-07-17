@@ -35,7 +35,7 @@ sudo tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && sudo rm eksctl_$PLATFORM.tar.gz
 sudo mv /tmp/eksctl /usr/local/bin
 
 for i in {1..30}; do
-    if aws s3api head-object --bucket "{$AWS_STATIC_BUCKET}" --key "{$AWS_STATIC_BUCKET}/scripts/bootstrap/eks-alb-controller.sh" 2>/dev/null; then
+    if aws s3api head-object --bucket "{$AWS_STATIC_BUCKET}" --key "scripts/bootstrap/eks-alb-controller.sh" 2>/dev/null; then
         echo "✅ -- Object exists"
 
         echo "📥 -- downloading bootstrap scripts from s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/..."
@@ -64,7 +64,3 @@ end
 
 echo "❌ -- Object does NOT exist"
 exit 1
-
-
-
-
