@@ -34,6 +34,11 @@ variable "bastion_ami_id" {
   type    = string
   default = "ami-0953476d60561c955"
 }
+
+variable "s3_static_bucket" {
+  type = string
+}
+
 # variable "app_alb_port" {
 #     type = number
 
@@ -42,3 +47,12 @@ variable "bastion_ami_id" {
 #         error_message = "app port for ALB must be between 1,024 and 49,151"
 #     }
 # }
+
+# for script rendering
+variable "dockerhub_user" { type = string }
+variable "logfire_url" { type = string }
+variable "logfire_project_name" { type = string }
+variable "logfire_api_key" { 
+    type = string 
+    sensitive = true
+}

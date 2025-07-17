@@ -1,3 +1,5 @@
+# data "aws_caller_identity" "current" {}
+
 resource "aws_security_group" "bastion_sg" {
   vpc_id = var.vpc_id
 }
@@ -51,12 +53,77 @@ resource "aws_iam_role_policy_attachment" "bastion_ssm_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+# EKS specific IAM requirements to use bastion for app deployment
+data "aws_iam_policy_document" "bastion_eks_policies" {
+  statement {
+      effect = "Allow"
+      actions = [
+          "eks:DescribeCluster",
+          "eks:UpdateKubeconfig",
+          "eks:ListClusters"
+      ]
+      resources = [var.eks_cluster_arn]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "eks:DescribeClusterVersions",
+      "sts:GetCallerIdentity",
+      "sts:AssumeRole",
+      "sts:AssumeRoleWithWebIdentity",
+      "iam:CreateRole",
+      "iam:DeleteRole",
+      "iam:CreatePolicy",
+      "iam:TagRole",
+      "iam:UpdateAssumeRolePolicy",
+      "iam:PutRolePolicy",
+      "iam:AttachRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:PassRole",
+      "iam:GetRole",
+      "iam:GetOpenIDConnectProvider",
+      "cloudformation:ListStacks",
+      "cloudformation:CreateStack",
+      "cloudformation:DescribeStacks",
+      "cloudformation:DeleteStack"
+    ]
+    resources = ["*"] # Required because this API doesn't use a cluster ARN
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:ListBucket"
+    ]
+    resources = ["arn:aws:s3:::${var.s3_static_bucket}", "arn:aws:s3:::${var.s3_static_bucket}/*"]
+  }
+}
+
+resource "aws_iam_policy" "eks_describe_cluster" {
+  name = "BastionEksPolicies"
+  policy = data.aws_iam_policy_document.bastion_eks_policies.json
+}
+
+resource "aws_iam_role_policy_attachment" "bastion_eks_policies" {
+  role = aws_iam_role.bastion_ssm_role.name
+  policy_arn = aws_iam_policy.eks_describe_cluster.arn
+}
+
 resource "aws_iam_instance_profile" "bastion_ssm_profile" {
   name = "${var.plat_name}-bastion-ssm-profile"
   role = aws_iam_role.bastion_ssm_role.name
 }
 
+# inject static(!) parameters into user_data script
+locals {
+  user_data_rendered = templatefile("${path.module}/../../../scripts/bootstrap/bastion-startup.sh", {
+    CLUSTER_NAME = var.eks_cluster_name,
+    AWS_REGION       = var.region,
+    AWS_STATIC_BUCKET = var.s3_static_bucket
+  })
+}
 
+# Bastion Host 
 resource "aws_instance" "bastion_host" {
   ami                         = var.bastion_ami_id
   instance_type               = "t2.small"
@@ -75,26 +142,29 @@ resource "aws_instance" "bastion_host" {
   }
 
   # for later when EKS API endpoint is moved to private only
-  user_data = <<-EOF
-    #!/bin/bash
-    yum update -y
-    yum install -y curl unzip amazon-ssm-agent
-
-    systemctl enable amazon-ssm-agent
-    systemctl start amazon-ssm-agent
-
-    # curl "https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.0/2023-06-23/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
-    # chmod +x /usr/local/bin/kubectl
-    
-    # installations for GitHub Actions
-    # Helm
-    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
-    chmod 700 get_helm.sh && ./get_helm.sh
-    # kubectl
-    curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
-    chmod +x kubectl && mv kubectl /usr/local/bin/
-
-    EOF
+  user_data = local.user_data_rendered
+  user_data_replace_on_change = true
+#   user_data = file("${path.module}/../../../scripts/bootstrap/bastion-startup.sh")
 
 }
 
+# locals {
+#   eks_alb_controller_rendered = templatefile("${path.module}/../../../scripts/bootstrap/eks-alb-controller.sh", {
+#     CLUSTER_NAME = var.eks_cluster_name,
+#     AWS_REGION = var.region,
+#     AWS_ACCOUNT_ID = data.aws_caller_identity.current.account_id,
+#     VPC_ID = var.vpc_id
+#   })
+# }
+
+# resource "aws_s3_object" "rendered_script" {
+#   bucket = var.s3_static_bucket
+#   key    = "scripts/bootstrap/eks-alb-controller.sh"
+#   content = local.eks_alb_controller_rendered
+#   content_type = "text/x-shellscript"
+
+#   tags = {
+#     Name        = "ALB Controller script"
+#     Environment = var.env
+#   }
+# }

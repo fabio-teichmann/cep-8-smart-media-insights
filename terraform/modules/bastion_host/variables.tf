@@ -31,6 +31,23 @@ variable "vpc_id" {
   type = string
 }
 
+variable "region" {
+  type = string 
+  default = "us-east-1"
+}
+
+variable "eks_cluster_name" {
+  type = string
+}
+
+variable "eks_cluster_arn" {
+  type = string
+}
+
+variable "s3_static_bucket" {
+  type = string
+}
+
 # temporary #################
 variable "user_ip" {
   type = string

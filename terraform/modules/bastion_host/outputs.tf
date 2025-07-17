@@ -14,3 +14,11 @@ output "bastion_sg" {
 output "bastion_id" {
   value = aws_instance.bastion_host.id
 }
+
+output "bastion_role_arn" {
+  value = aws_iam_role.bastion_ssm_role.arn
+}
+
+output "bastion_role_name" {
+  value = aws_iam_role.bastion_ssm_role.name
+}

@@ -13,6 +13,10 @@ variable "vpc_private_subnets" {
     type = list(string)
 }
 
+variable "vpc_public_subnets" {
+    type = list(string)
+}
+
 variable "vpc_endpoint_sg_id" {
     type = string
 }

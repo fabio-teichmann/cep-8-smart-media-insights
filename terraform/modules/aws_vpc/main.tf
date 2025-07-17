@@ -2,6 +2,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
+  version = "5.21.0"
 
   name = "${var.plat_name}-vpc"
   cidr = "10.0.0.0/16"
@@ -31,8 +32,18 @@ resource "aws_security_group" "vpc_enpoint_sg" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_https" {
+resource "aws_vpc_security_group_ingress_rule" "allow_https_in_private_subnet" {
   for_each = toset(module.vpc.private_subnets_cidr_blocks)
+
+  security_group_id = aws_security_group.vpc_enpoint_sg.id
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_ipv4         = each.value
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_https_in_public_subnet" {
+  for_each = toset(module.vpc.public_subnets_cidr_blocks)
 
   security_group_id = aws_security_group.vpc_enpoint_sg.id
   ip_protocol       = "tcp"
@@ -78,29 +89,3 @@ resource "aws_vpc_security_group_egress_rule" "all_out_lambda" {
 #   to_port           = 0
   cidr_ipv4         = "0.0.0.0/0"
 }
-
-
-
-# # VPC Endpoint(s) ############
-# resource "aws_vpc_endpoint" "s3" {
-#   vpc_id          = module.vpc.vpc_id
-#   service_name    = "com.amazonaws.${var.region}.s3"
-#   route_table_ids = module.vpc.private_route_table_ids
-# }
-
-# resource "aws_vpc_endpoint" "dynamo_db" {
-#   vpc_id          = module.vpc.vpc_id
-#   service_name    = "com.amazonaws.${var.region}.dynamodb"
-#   route_table_ids = module.vpc.private_route_table_ids
-# }
-
-# resource "aws_vpc_endpoint" "kinesis_stream" {
-#   vpc_id            = module.vpc.vpc_id
-#   service_name      = "com.amazonaws.${var.region}.kinesis"
-#   vpc_endpoint_type = "Interface"
-
-#   private_dns_enabled = true
-
-#   subnet_ids         = module.vpc.private_subnets 
-#   security_group_ids = [aws_security_group.vpc_enpoint_sg.id]
-# }

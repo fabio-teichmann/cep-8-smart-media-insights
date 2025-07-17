@@ -37,5 +37,10 @@ jobs:
           -var="plat_name=smart-media" \
           -var="env=dev" \
           -var="eks_svc_acc_name=smart-media-cluster-svc-acc" \
-          -var="user_ip=${{ vars.USER_IP_ADDRESS }}"
+          -var="user_ip=${{ vars.USER_IP_ADDRESS }}" \
+          -var="s3_static_bucket=${{ vars.AWS_STATIC_BUCKET }}" \
+          -var="logfire_url=${{ vars.LOGFIRE_URL }}" \
+          -var="logfire_project_name=${{ vars.LOGFIRE_PROJECT_NAME }}" \
+          -var="logfire_api_key=${{ secrets.LOGFIRE_API_KEY }}" \
+          -var="dockerhub_user=${{ vars.DOCKERHUB_USER }}"
         

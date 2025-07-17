@@ -35,3 +35,8 @@ variable "vpc_private_subnets" {
 variable "lambda_sg_id" {
   type = string
 }
+
+variable "logfire_api_key" {
+  type = string
+  sensitive = true
+}
