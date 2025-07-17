@@ -11,9 +11,6 @@ yum install -y curl unzip amazon-ssm-agent --skip-broken --allowerasing
 systemctl enable amazon-ssm-agent
 systemctl start amazon-ssm-agent
 
-# curl "https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.0/2023-06-23/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
-# chmod +x /usr/local/bin/kubectl
-
 # installations for GitHub Actions
 # Helm
 sudo curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
@@ -37,19 +34,37 @@ sudo curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksc
 sudo tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && sudo rm eksctl_$PLATFORM.tar.gz
 sudo mv /tmp/eksctl /usr/local/bin
 
-echo "📥 -- downloading bootstrap scripts from s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/..."
-echo " -> eks-alb-controller script"
-sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/eks-alb-controller.sh /usr/local/src/bootstrap/eks-alb-controller.sh
-sudo chmod +x /usr/local/src/bootstrap/eks-alb-controller.sh
+for i in {1..30}; do
+    if aws s3api head-object --bucket "{$AWS_STATIC_BUCKET}" --key "{$AWS_STATIC_BUCKET}/scripts/bootstrap/eks-alb-controller.sh" 2>/dev/null; then
+        echo "✅ -- Object exists"
 
-echo " -> helm-deploy-eks script"
-sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/helm-deploy-eks.sh /usr/local/src/bootstrap/helm-deploy-eks.sh
-sudo chmod +x /usr/local/src/bootstrap/helm-deploy-eks.sh
+        echo "📥 -- downloading bootstrap scripts from s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/..."
+        echo " -> eks-alb-controller script"
+        sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/eks-alb-controller.sh /usr/local/src/bootstrap/eks-alb-controller.sh
+        sudo chmod +x /usr/local/src/bootstrap/eks-alb-controller.sh
 
-echo " -> cloudformation-cleanup script"
-sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/cloudformation-cleanup.sh /usr/local/src/bootstrap/cloudformation-cleanup.sh
-sudo chmod +x /usr/local/src/bootstrap/cloudformation-cleanup.sh
+        echo " -> helm-deploy-eks script"
+        sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/helm-deploy-eks.sh /usr/local/src/bootstrap/helm-deploy-eks.sh
+        sudo chmod +x /usr/local/src/bootstrap/helm-deploy-eks.sh
 
-# signal bootstrap ready
-touch /var/log/startup_done
-echo "START_UP SUCCESS" > /var/log/startup_done
+        echo " -> cloudformation-cleanup script"
+        sudo aws s3 cp s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/cloudformation-cleanup.sh /usr/local/src/bootstrap/cloudformation-cleanup.sh
+        sudo chmod +x /usr/local/src/bootstrap/cloudformation-cleanup.sh
+
+        # signal bootstrap ready
+        touch /var/log/startup_done
+        echo "START_UP SUCCESS" > /var/log/startup_done
+        exit 0
+    
+    else
+        echo "⏳ -- Waiting for bootstrap script upload to complete..."
+        sleep 5
+    fi
+end
+
+echo "❌ -- Object does NOT exist"
+exit 1
+
+
+
+
