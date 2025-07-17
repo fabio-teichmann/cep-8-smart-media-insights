@@ -88,6 +88,7 @@ def get_results(request_id: str, response: Response):
     """checks results' status and retrieves results if processed"""
     logfire.info(f"Checking results for request: {request_id}...")
     try:
+        logfire.debug("--> sending request to DynamoDB...")
         r = dynamo_client.get_item(
             TableName = DYNAMO_TABLE,
             Key = {
