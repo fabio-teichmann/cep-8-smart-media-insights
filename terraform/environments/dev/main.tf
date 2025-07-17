@@ -87,6 +87,7 @@ module "ingestion" {
 
   vpc_private_subnets = module.vpc.vpc_private_subnets
   lambda_sg_id        = module.vpc.lambda_sg_id
+  logfire_api_key = var.logfire_api_key
 
   depends_on = [module.vpc]
 }
