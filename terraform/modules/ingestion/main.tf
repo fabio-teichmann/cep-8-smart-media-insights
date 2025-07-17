@@ -201,6 +201,7 @@ resource "aws_lambda_function" "kinesis_to_dynamo" {
   environment {
     variables = {
       "DYNAMO_TABLE" = aws_dynamodb_table.request_status_lookup.name
+      "LOGFIRE_TOKEN" = var.logfire_api_key
     }
   }
 }
