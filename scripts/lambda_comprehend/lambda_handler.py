@@ -60,6 +60,7 @@ def lambda_handler(event, context):
             }
             logfire.debug(f"RESULT: {result}")
             serialized_result = serializer.serialize(result)
+            logfire.debug(f"SERIALIZED: {serialized_result}")
 
         except ClientError as e:
             logfire.error(f"Comprehend client error: {e}")
