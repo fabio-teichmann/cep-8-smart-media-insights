@@ -56,7 +56,10 @@ data "aws_iam_policy_document" "lambda_iam_policies_comprehend" {
       "s3:GetObject",
       "s3:ListBucket",
     ]
-    resources = [ var.s3_media_bucket_arn ]
+    resources = [ 
+      var.s3_media_bucket_arn,
+      "${var.s3_media_bucket_arn}/*"
+    ]
   }
   statement {
     effect = "Allow"

@@ -27,6 +27,7 @@ def lambda_handler(event, context):
                 Bucket = s3_bucket,
                 Key = key_to_obj
             )
+            logfire.debug(f"FILE metadata from S3: {file['Metadata']}")
             logfire.debug(f"FILE from S3: {file}")
             # payload = base64.b64decode(record["s3"]["data"]).decode("utf-8")
             # media_meta = json.loads(payload)
