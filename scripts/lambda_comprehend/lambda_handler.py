@@ -3,6 +3,8 @@ import boto3
 import json
 import base64
 from datetime import datetime
+from decimal import Decimal
+
 import logfire
 from botocore.exceptions import ClientError
 from boto3.dynamodb.types import TypeSerializer
@@ -54,8 +56,9 @@ def lambda_handler(event, context):
             media_status = "processed"
             result = {
                 "sentiment": response["Sentiment"],
-                "sentiment_score": response["SentimentScore"],
+                "sentiment_score": json.loads(json.dumps(response["SentimentScore"]), parse_float=Decimal),
             }
+            logfire.debug(f"RESULT: {result}")
             serialized_result = serializer.serialize(result)
 
         except ClientError as e:
