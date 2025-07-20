@@ -79,7 +79,9 @@ def lambda_handler(event, context):
             response = dynamo_client.update_item(
                 TableName=DYNAMO_TABLE,
                 Key={"request_id": {"S": request_id}},
-                AttributeUpdates=item,
+                UpdateExpression="SET",
+                ExpressionAttributeNames=item,
+                # AttributeUpdates=item,
                 # Item=item,
             )
         except ClientError as e:
