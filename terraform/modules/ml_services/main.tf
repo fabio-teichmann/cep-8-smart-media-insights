@@ -80,7 +80,7 @@ resource "aws_s3_bucket_notification" "bucket_notification_text" {
 resource "aws_lambda_function" "s3_to_comprehend_to_dynamo" {
   filename      = "${local.lambda_ingest_path}/lambda_comprehend.zip"
   function_name = "lambda_s3_to_comprehend_to_dynamodb"
-  role          = aws_iam_role.iam_for_lambda.arn
+  role          = aws_iam_role.iam_for_lambda_comprehend.arn
   handler       = "lambda_handler.lambda_handler"
 
   source_code_hash = filebase64sha256("${local.lambda_ingest_path}/lambda_comprehend.zip")
