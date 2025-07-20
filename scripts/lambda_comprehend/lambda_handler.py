@@ -5,6 +5,9 @@ import base64
 from datetime import datetime
 import logfire
 from botocore.exceptions import ClientError
+from boto3.dynamodb.types import TypeSerializer
+
+serializer = TypeSerializer()
 
 logfire.configure()
 
@@ -53,6 +56,7 @@ def lambda_handler(event, context):
                 "sentiment": response["Sentiment"],
                 "sentiment_score": response["SentimentScore"],
             }
+            serialized_result = serializer.serialize(result)
 
         except ClientError as e:
             logfire.error(f"Comprehend client error: {e}")
@@ -73,7 +77,7 @@ def lambda_handler(event, context):
             "updated_at": {"S": datetime.now().isoformat()},
             "status": {"S": media_status},
             # "media_type": {"S": "text"},
-            "result": {"M": result}
+            "result": serialized_result
         }
         try:
             response = dynamo_client.update_item(
