@@ -88,10 +88,13 @@ def lambda_handler(event, context):
             response = dynamo_client.update_item(
                 TableName=DYNAMO_TABLE,
                 Key={"request_id": {"S": request_id}},
-                UpdateExpression="SET updated_at=:updated_at, status=:status, result=:result",
+                UpdateExpression="SET #u=:updated_at, #s=:status, #r=:result",
+                ExpressionAttributeNames = {
+                    "#u": "updated_at",
+                    "#s": "status",
+                    "#r": "result"
+                },
                 ExpressionAttributeValues=item,
-                # AttributeUpdates=item,
-                # Item=item,
             )
         except ClientError as e:
             logfire.error(f"DynamoDB client error: {e}")
