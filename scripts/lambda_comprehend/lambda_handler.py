@@ -12,15 +12,25 @@ dynamo_client = boto3.client("dynamodb")
 DYNAMO_TABLE = os.getenv("DYNAMO_TABLE")
 
 comprehend_client = boto3.client("comprehend")
+s3_client = boto3.client("s3")
 
 
 def lambda_handler(event, context):
     for record in event["Records"]:
         logfire.debug(f"RECORD: {record}")
+        # extract params
+        s3_bucket = record["s3"]["bucket"]["name"]
+        key_to_obj = record["s3"]["object"]["key"]
+        request_id = key_to_obj.split("/")[-1].split("_")[0]
         try:
-            payload = base64.b64decode(record["s3"]["data"]).decode("utf-8")
-            media_meta = json.loads(payload)
-            logfire.info("Decoded metadata", extra=media_meta)
+            file = s3_client.get_object(
+                Bucket = s3_bucket,
+                Key = key_to_obj
+            )
+            logfire.debug(f"FILE from S3: {file}")
+            # payload = base64.b64decode(record["s3"]["data"]).decode("utf-8")
+            # media_meta = json.loads(payload)
+            # logfire.info("Decoded metadata", extra=media_meta)
 
             response = comprehend_client.detect_sentiment(
                 Text = "",
@@ -45,7 +55,7 @@ def lambda_handler(event, context):
         
         logfire.info("Updating entry in DynamoDB...")
         item = {
-            "request_id": {"S": media_meta["request_id"]},
+            "request_id": {"S": request_id},
             "updated_at": {"S": datetime.now().isoformat()},
             "status": {"S": media_status},
             "media_type": {"S": "text"},
