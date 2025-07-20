@@ -47,6 +47,7 @@ data "aws_iam_policy_document" "lambda_iam_policies_comprehend" {
     actions = [
       "dynamodb:PutItem",
       "dynamodb:UpdateItem",
+      "dynamodb:GetItem"
     ]
     resources = [var.dynamo_status_table_arn]
   }

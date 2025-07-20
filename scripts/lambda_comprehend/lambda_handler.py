@@ -75,13 +75,25 @@ def lambda_handler(event, context):
             # "media_type": {"S": "text"},
             "result": {"M": result}
         }
-
-        response = dynamo_client.update_item(
-            TableName=DYNAMO_TABLE,
-            Key=request_id,
-            AttributeUpdates=item,
-            # Item=item,
-        )
+        try:
+            response = dynamo_client.update_item(
+                TableName=DYNAMO_TABLE,
+                Key=request_id,
+                AttributeUpdates=item,
+                # Item=item,
+            )
+        except ClientError as e:
+            logfire.error(f"DynamoDB client error: {e}")
+            return {
+                "statusCode": 500,
+                "message": str(e),
+            }
+        except Exception as e:
+            logfire.error(f"General error: {e}")
+            return {
+                "statusCode": 500,
+                "message": str(e),
+            }
 
     return {
         "statusCode": 200,
