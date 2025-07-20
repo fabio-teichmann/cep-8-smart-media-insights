@@ -83,6 +83,7 @@ def lambda_handler(event, context):
             # "media_type": {"S": "text"},
             ":result": serialized_result
         }
+        logfire.debug(f"ITEM: {item}")
         try:
             response = dynamo_client.update_item(
                 TableName=DYNAMO_TABLE,
