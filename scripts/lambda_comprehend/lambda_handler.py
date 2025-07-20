@@ -47,9 +47,12 @@ def lambda_handler(event, context):
                 Text = text,
                 LanguageCode = "en"
             )
-
             logfire.info("Comprehend sentiment detection success", extra=response)
             media_status = "processed"
+            result = {
+                "sentiment": response["Sentiment"],
+                "sentiment_score": response["SentimentScore"],
+            }
 
         except ClientError as e:
             logfire.error(f"Comprehend client error: {e}")
@@ -66,15 +69,18 @@ def lambda_handler(event, context):
         
         logfire.info("Updating entry in DynamoDB...")
         item = {
-            "request_id": {"S": request_id},
+            # "request_id": {"S": request_id},
             "updated_at": {"S": datetime.now().isoformat()},
             "status": {"S": media_status},
-            "media_type": {"S": "text"},
+            # "media_type": {"S": "text"},
+            "result": {"M": result}
         }
 
-        response = dynamo_client.put_item(
+        response = dynamo_client.update_item(
             TableName=DYNAMO_TABLE,
-            Item=item,
+            Key=request_id,
+            AttributeUpdates=item,
+            # Item=item,
         )
 
     return {
