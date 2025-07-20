@@ -31,7 +31,14 @@ def lambda_handler(event, context):
             # payload = base64.b64decode(record["s3"]["data"]).decode("utf-8")
             # media_meta = json.loads(payload)
             # logfire.info("Decoded metadata", extra=media_meta)
-
+        except ClientError as e:
+            logfire.error(f"S3 client error: {e}")
+            return {
+                "statusCode": 500,
+                "message": str(e),
+            }
+        
+        try:
             response = comprehend_client.detect_sentiment(
                 Text = "",
                 LanguageCode = "en"
