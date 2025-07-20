@@ -16,9 +16,45 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-resource "aws_iam_role" "iam_for_lambda" {
-  name               = "iam_for_lambda"
+resource "aws_iam_role" "iam_for_lambda_comprehend" {
+  name               = "iam_for_lambda_comprehend"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+# Lambda Comprehend specific IAM roles
+data "aws_iam_policy_document" "lambda_iam_policies_comprehend" {
+  statement {
+      effect = "Allow"
+      actions = [
+          "ec2:CreateNetworkInterface",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteNetworkInterface",
+          "ec2:DescribeSubnets",
+          "ec2:AssignPrivateIpAddresses",
+          "ec2:UnassignPrivateIpAddresses",
+      ]
+      resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "comprehend:DetectSentiment",
+    ]
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+    ]
+    resources = [var.dynamo_status_table_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_policy_comprehend" {
+  role   = aws_iam_role.iam_for_lambda_comprehend.id
+  policy = data.aws_iam_policy_document.lambda_iam_policies_comprehend.json
 }
 
 resource "aws_lambda_permission" "allow_bucket_comprehend" {

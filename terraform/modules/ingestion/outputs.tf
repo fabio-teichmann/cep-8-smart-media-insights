@@ -13,3 +13,7 @@ output "dynamodb_status_table" {
 output "kinesis_stream_name" {
   value = aws_kinesis_stream.ingest_stream.name
 }
+
+output "dynamo_status_table_arn" {
+  value = aws_dynamodb_table.request_status_lookup.arn
+}

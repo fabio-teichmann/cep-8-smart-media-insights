@@ -22,3 +22,7 @@ variable "s3_media_bucket_id" {
 variable "dynamodb_status_table" {
     type = string
 }
+
+variable "dynamo_status_table_arn" {
+  type = string
+}

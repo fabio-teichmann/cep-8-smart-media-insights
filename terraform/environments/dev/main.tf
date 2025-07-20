@@ -139,6 +139,8 @@ module "ml_services" {
   s3_media_bucket_id = module.ingestion.s3_media_bucket
   s3_media_bucket_arn = module.ingestion.s3_media_bucket_arn
   dynamodb_status_table = module.ingestion.dynamodb_status_table
+  dynamo_status_table_arn = module.ingestion.dynamo_status_table_arn
+
   logfire_api_key = var.logfire_api_key
 
 }
