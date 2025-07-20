@@ -77,16 +77,16 @@ def lambda_handler(event, context):
         logfire.info("Updating entry in DynamoDB...")
         item = {
             # "request_id": {"S": request_id},
-            "updated_at": {"S": datetime.now().isoformat()},
-            "status": {"S": media_status},
+            ":updated_at": {"S": datetime.now().isoformat()},
+            ":status": {"S": media_status},
             # "media_type": {"S": "text"},
-            "result": serialized_result
+            ":result": serialized_result
         }
         try:
             response = dynamo_client.update_item(
                 TableName=DYNAMO_TABLE,
                 Key={"request_id": {"S": request_id}},
-                UpdateExpression="SET updated_at=updated_at, status=status, result=result",
+                UpdateExpression="SET updated_at=:updated_at, status=:status, result=:result",
                 ExpressionAttributeValues=item,
                 # AttributeUpdates=item,
                 # Item=item,
