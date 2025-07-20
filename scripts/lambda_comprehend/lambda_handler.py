@@ -80,7 +80,7 @@ def lambda_handler(event, context):
                 TableName=DYNAMO_TABLE,
                 Key={"request_id": {"S": request_id}},
                 UpdateExpression="SET",
-                ExpressionAttributeNames=item,
+                ExpressionAttributeValues=item,
                 # AttributeUpdates=item,
                 # Item=item,
             )
