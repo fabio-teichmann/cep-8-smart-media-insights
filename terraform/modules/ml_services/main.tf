@@ -50,6 +50,15 @@ data "aws_iam_policy_document" "lambda_iam_policies_comprehend" {
     ]
     resources = [var.dynamo_status_table_arn]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "lambda_policy_comprehend" {
