@@ -29,6 +29,9 @@ def lambda_handler(event, context):
             )
             logfire.debug(f"FILE metadata from S3: {file['Metadata']}")
             logfire.debug(f"FILE from S3: {file}")
+            text = file.get("Body").read().decode("utf-8")
+            logfire.info(f"TEXT: {text}")
+
             # payload = base64.b64decode(record["s3"]["data"]).decode("utf-8")
             # media_meta = json.loads(payload)
             # logfire.info("Decoded metadata", extra=media_meta)
@@ -41,7 +44,7 @@ def lambda_handler(event, context):
         
         try:
             response = comprehend_client.detect_sentiment(
-                Text = "",
+                Text = text,
                 LanguageCode = "en"
             )
 
