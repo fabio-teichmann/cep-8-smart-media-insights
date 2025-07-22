@@ -38,6 +38,7 @@ sudo mv /tmp/eksctl /usr/local/bin
 echo "⏳ -- Waiting for bootstrap script upload to complete..."
 for i in {1..30}; do
     sleep 5
+    echo "... still waiting..."
 done
 
 echo "📥 -- downloading bootstrap scripts from s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/..."
