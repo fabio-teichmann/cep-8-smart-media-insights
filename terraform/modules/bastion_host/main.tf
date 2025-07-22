@@ -144,27 +144,4 @@ resource "aws_instance" "bastion_host" {
   # for later when EKS API endpoint is moved to private only
   user_data = local.user_data_rendered
   user_data_replace_on_change = true
-#   user_data = file("${path.module}/../../../scripts/bootstrap/bastion-startup.sh")
-
 }
-
-# locals {
-#   eks_alb_controller_rendered = templatefile("${path.module}/../../../scripts/bootstrap/eks-alb-controller.sh", {
-#     CLUSTER_NAME = var.eks_cluster_name,
-#     AWS_REGION = var.region,
-#     AWS_ACCOUNT_ID = data.aws_caller_identity.current.account_id,
-#     VPC_ID = var.vpc_id
-#   })
-# }
-
-# resource "aws_s3_object" "rendered_script" {
-#   bucket = var.s3_static_bucket
-#   key    = "scripts/bootstrap/eks-alb-controller.sh"
-#   content = local.eks_alb_controller_rendered
-#   content_type = "text/x-shellscript"
-
-#   tags = {
-#     Name        = "ALB Controller script"
-#     Environment = var.env
-#   }
-# }

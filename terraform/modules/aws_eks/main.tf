@@ -111,12 +111,3 @@ module "eks" {
     Terraform   = "true"
   }
 }
-
-# resource "aws_security_group_rule" "allow_alb_to_eks" {
-#   type              = "ingress"
-#   from_port         = var.app_alb_port
-#   to_port           = var.app_alb_port
-#   protocol          = "tcp"
-#   security_group_id = module.eks.node_security_group_id
-#   source_security_group_id = var.alb_security_group_id
-# }
