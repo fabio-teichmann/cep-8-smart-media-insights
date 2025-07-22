@@ -130,6 +130,22 @@ module "bootstrap" {
 }
 
 
+module "ml_services" {
+  source = "../../modules/ml_services"
+
+  vpc_private_subnets = module.vpc.vpc_private_subnets
+  lambda_sg_id        = module.vpc.lambda_sg_id
+
+  s3_media_bucket_id = module.ingestion.s3_media_bucket
+  s3_media_bucket_arn = module.ingestion.s3_media_bucket_arn
+  dynamodb_status_table = module.ingestion.dynamodb_status_table
+  dynamo_status_table_arn = module.ingestion.dynamo_status_table_arn
+
+  logfire_api_key = var.logfire_api_key
+
+}
+
+
 # module "bastion_eks_config" {
 #   source = "../../modules/bastion_eks_config"
 

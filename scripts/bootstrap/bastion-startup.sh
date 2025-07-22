@@ -37,7 +37,7 @@ sudo mv /tmp/eksctl /usr/local/bin
 # TODO: link waiting time to actual object existence in S3
 echo "⏳ -- Waiting for bootstrap script upload to complete..."
 for i in {1..30}; do
-    sleep 1
+    sleep 5
 done
 
 echo "📥 -- downloading bootstrap scripts from s3://${AWS_STATIC_BUCKET}/scripts/bootstrap/..."
