@@ -55,22 +55,6 @@ resource "aws_dynamodb_table" "request_status_lookup" {
     type = "S"
   }
 
-#   attribute {
-#     name = "processed_at"
-#     type = "S"
-#   }
-
-#   attribute {
-#     name = "result"
-#     type = "S"
-#   }
-
-  # NOTE: deferred for now;
-  # ttl {
-  #     attribute_name = "expires_at"
-  #     enabled = true
-  # }
-
   global_secondary_index {
     name            = "status-index"
     hash_key        = "status"
@@ -175,11 +159,6 @@ locals {
   lambda_ingest_path = "${path.module}/../../../scripts/lambda_ingest"
 
 }
-# data "archive_file" "lambda" {
-#   type        = "zip"
-#   source_file = "../../../scripts/lambda_ingest/kinesis-to-dynamo.py"
-#   output_path = "lambda_payload.zip"
-# }
 
 resource "aws_lambda_function" "kinesis_to_dynamo" {
   filename      = "${local.lambda_ingest_path}/lambda_ingest.zip"

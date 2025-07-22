@@ -39,15 +39,6 @@ variable "s3_static_bucket" {
   type = string
 }
 
-# variable "app_alb_port" {
-#     type = number
-
-#     validation {
-#         condition = var.app_alb_port >= 1024 && var.app_alb_port <= 49151
-#         error_message = "app port for ALB must be between 1,024 and 49,151"
-#     }
-# }
-
 # for script rendering
 variable "dockerhub_user" { type = string }
 variable "logfire_url" { type = string }
