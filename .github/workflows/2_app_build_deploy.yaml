@@ -78,6 +78,7 @@ jobs:
       run: |
         bash scripts/lambda_ingest/build_lambda.sh
         bash scripts/lambda_comprehend/build_lambda.sh
+        bash scripts/lambda_rekognition/build_lambda.sh
 
     - name: setup-terraform
       uses: hashicorp/setup-terraform@v3
