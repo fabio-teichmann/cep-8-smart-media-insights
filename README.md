@@ -39,7 +39,7 @@ There are essentially two ways to configure an ALB for EKS:
 ---
 
 ## Current manual setups:
-> [!INFO]
+> [!NOTE]
 > Currently, the CI/CD automation does not work end-to-end due to EKS's additional security layer (user registered in ConfigMap -- `aws-auth`) for authentication. Once this is done from the admin, all else works as expected. I deferred solving this "minor" issue for the benefit of moving forward with the MVP.
 
 After `terraform apply`, update cluster ConfigMap to add bastion host:
@@ -48,3 +48,17 @@ aws eks update-kubeconfig --region us-east-1 --name smart-media-eks
 
 eksctl create iamidentitymapping --cluster smart-media-eks --region us-east-1 --arn arn:aws:iam::<ACC_NUM>:role/smart-media-bastion-ssm-role --group system:masters --username smart-media-bastion-ssm-role
 ```
+
+---
+
+## Next Steps:
+
+| Feature | Description | Priority |
+| :-- | :-- | :--: |
+| Self-hosted GHA runner | This will allow to reduce the multitude of responsibilities the bastion host currently has (also potential security risk) | medium |
+| GitOps for CD | | high |
+| Ramp-up Monitoring | Currently only using Logfire which greatly helped debugging the app and lambda functions. Need a more consolidated picture of the other components (esp. k8s) | high |
+| Replace Kinesis with Kafka | Goal is understand complexity and cost implications. Kafka might be overkill for this project | medium-high |
+| Add RDS for ML results | As intended in the architecture diagram | high |
+| API Docs | For completeness; the API itself is rather simple | medium |
+| Separate API endpoints into single deployments | This will allow independent scaling of resources for the endpoints | medium-high |
