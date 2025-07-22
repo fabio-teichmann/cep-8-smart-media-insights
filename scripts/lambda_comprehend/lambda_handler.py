@@ -1,7 +1,6 @@
 import os
 import boto3
 import json
-import base64
 from datetime import datetime
 from decimal import Decimal
 
@@ -35,11 +34,8 @@ def lambda_handler(event, context):
             logfire.debug(f"FILE metadata from S3: {file['Metadata']}")
             logfire.debug(f"FILE from S3: {file}")
             text = file.get("Body").read().decode("utf-8")
-            logfire.info(f"TEXT: {text}")
+            logfire.debug(f"TEXT: {text}")
 
-            # payload = base64.b64decode(record["s3"]["data"]).decode("utf-8")
-            # media_meta = json.loads(payload)
-            # logfire.info("Decoded metadata", extra=media_meta)
         except ClientError as e:
             logfire.error(f"S3 client error: {e}")
             return {
@@ -77,10 +73,8 @@ def lambda_handler(event, context):
         
         logfire.info("Updating entry in DynamoDB...")
         item = {
-            # "request_id": {"S": request_id},
             ":updated_at": {"S": datetime.now().isoformat()},
             ":status": {"S": media_status},
-            # "media_type": {"S": "text"},
             ":result": serialized_result
         }
         logfire.debug(f"ITEM: {item}")

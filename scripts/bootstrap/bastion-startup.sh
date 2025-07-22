@@ -57,18 +57,3 @@ sudo chmod +x /usr/local/src/bootstrap/cloudformation-cleanup.sh
 # signal bootstrap ready
 touch /var/log/startup_done
 echo "START_UP SUCCESS" > /var/log/startup_done
-
-#     if aws s3api head-object --bucket "{$AWS_STATIC_BUCKET}" --key "scripts/bootstrap/eks-alb-controller.sh" 2>/dev/null; then
-#         echo "✅ -- Object exists"
-
-        
-#         exit 0
-    
-#     else
-#         echo "⏳ -- Waiting for bootstrap script upload to complete..."
-#         sleep 5
-#     fi
-# done
-
-# echo "❌ -- Object does NOT exist"
-# exit 1

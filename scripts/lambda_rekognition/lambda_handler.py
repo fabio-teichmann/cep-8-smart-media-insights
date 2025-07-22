@@ -27,22 +27,6 @@ def lambda_handler(event, context):
         s3_bucket = record["s3"]["bucket"]["name"]
         key_to_obj = record["s3"]["object"]["key"]
         request_id = key_to_obj.split("/")[-1].split("_")[0]
-        # try:
-        #     file = s3_client.get_object(
-        #         Bucket = s3_bucket,
-        #         Key = key_to_obj
-        #     )
-        #     logfire.debug(f"FILE metadata from S3: {file['Metadata']}")
-        #     logfire.debug(f"FILE from S3: {file}")
-        #     text = file.get("Body").read().decode("utf-8")
-        #     logfire.info(f"DATA: {text}")
-
-        # except ClientError as e:
-        #     logfire.error(f"S3 client error: {e}")
-        #     return {
-        #         "statusCode": 500,
-        #         "message": str(e),
-        #     }
         
         try:
             response = rekognition_client.detect_labels(
@@ -57,10 +41,6 @@ def lambda_handler(event, context):
                 vals = (label["Name"], str(label["Confidence"]))
                 result[f"label_{i + 1}"] = vals
 
-            # result = {
-            #     "sentiment": response["Sentiment"],
-            #     "sentiment_score": json.loads(json.dumps(response["SentimentScore"]), parse_float=Decimal),
-            # }
             logfire.debug(f"RESULT: {result}")
             serialized_result = serializer.serialize(result)
             logfire.debug(f"SERIALIZED: {serialized_result}")
@@ -80,10 +60,8 @@ def lambda_handler(event, context):
         
         logfire.info("Updating entry in DynamoDB...")
         item = {
-            # "request_id": {"S": request_id},
             ":updated_at": {"S": datetime.now().isoformat()},
             ":status": {"S": media_status},
-            # "media_type": {"S": "text"},
             ":result": serialized_result
         }
         logfire.debug(f"ITEM: {item}")
